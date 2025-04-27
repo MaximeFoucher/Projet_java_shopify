@@ -1,32 +1,33 @@
 package Modele;
 
 public class Commander {
-    private int clientId;
-    private int produitId;
-    private int quantite;
+    private int commandeId;
+    private int note;
+    private boolean paye;
 
     // Constructeur
-    public Commander(int clientId, int produitId, int quantite) {
-        this.clientId = clientId;
-        this.produitId = produitId;
-        this.quantite = quantite;
+    public Commander(int commandeId, int note, boolean paye) {
+        this.commandeId = commandeId;
+        this.note = note;
+        this.paye = false;
     }
 
     // Getters
-    public int getClientId() {
-        return clientId;
+    public int getCommandeId() {
+        return commandeId;
     }
 
-    public int getProduitId() {
-        return produitId;
+    public int getNote() {
+        return note;
     }
 
-    public int getQuantite() {
-        return quantite;
+    public boolean getPaye() {
+        return paye;
     }
 
     // Setter
-    public void setQuantite(int quantite) {
-        this.quantite = quantite;
+    public void setPaye() {
+        this.paye = true;
     }
+
 }

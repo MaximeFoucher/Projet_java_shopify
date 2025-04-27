@@ -3,31 +3,49 @@ package Vue;
 import Dao.CommanderDAO;
 import Dao.DaoFactory;
 import Modele.Commander;
+import Dao.CommanderDAOImpl;
+import Dao.CommanderDAO;
+import Modele.Profil;
+import Modele.Article;
 
 
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class VueCommander {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        CommanderDAO dao = DaoFactory.getCommanderDAO();
+    public void afficherCommande(Commander achat, DaoFactory dao) {
+        // Récupérer un clientID du getter getClientId de l'objet achat
 
-        System.out.println("=== Passer une commande ===");
-        System.out.print("ID Client : ");
-        int clientId = scanner.nextInt();
-        System.out.print("ID Produit : ");
-        int produitId = scanner.nextInt();
-        System.out.print("Quantité : ");
-        int quantite = scanner.nextInt();
+        CommanderDAOImpl commanderDAO = new CommanderDAOImpl(dao);  // Crée une instance de CommanderDAOImpl
+        int idClient = commanderDAO.getIdClient(achat);
 
-        Commander commande = new Commander(clientId, produitId, quantite);
-        boolean success = dao.ajouterCommande(commande);
+        Profil client = new Profil(idClient); // recuperer le client avec son id
+        List<Article> articles = commanderDAO.getArticlesCommande(achat); //recupere tous les articles d'une commande
 
-        if (success) {
-            System.out.println("✅ Commande ajoutée avec succès !");
-        } else {
-            System.out.println("❌ Échec de l’ajout de la commande.");
+
+        // Afficher les informations du client et du produit pour l'objet achat en paramètre
+        System.out.println("Id Client : " + idClient + " Nom : " + client.getclientNom()
+                + " commande note : " + achat.getNote());
+
+        // Afficher tous les articles associés à la commande
+        for (Article article : articles) {
+            System.out.println("Nom du produit : " + article.getProduitNom()
+                    + " | Prix : " + article.getProduitPrix()
+                    + " | Quantité : " + article.getQuantite());
+        }
+    }
+
+    /**
+     * Méthode qui affiche la liste des commandes
+     * @param achats liste des produits et dao objet de la classe DaoFactory
+     */
+
+    public void afficherListeCommandes(ArrayList<Commander> achats, DaoFactory dao) {
+        // Afficher la liste des produits
+        for (Commander achat : achats) {
+            //afficherCommande(achat);
+            afficherCommande(achat, dao);
         }
     }
 }
