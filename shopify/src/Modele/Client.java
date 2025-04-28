@@ -2,13 +2,12 @@ package Modele;
 
 import java.util.List;
 
-public class clients {
+public class Client {
     private int id;
     private String mdp;
     private String name;
-    private List<clients> clients;
 
-    public clients(int id, String mdp, String name) {
+    public Client(int id, String mdp, String name) {
         this.id = id;
         this.mdp = mdp;
         this.name = name;
@@ -35,12 +34,6 @@ public class clients {
         this.name = name;
     }
 
-    public List<clients> getClients() {
-        return clients;
-    }
-    public void setClients(List<clients> clients) {
-        this.clients = clients;
-    }
 
 }
 
