@@ -2,11 +2,10 @@ package Vue;
 
 import Dao.CommanderDAO;
 import Dao.DaoFactory;
-import Modele.Commander;
+import Modele.*;
 import Dao.CommanderDAOImpl;
 import Dao.CommanderDAO;
-import Modele.Profil;
-import Modele.Article;
+
 
 
 import java.util.ArrayList;
