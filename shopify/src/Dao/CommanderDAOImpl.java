@@ -131,14 +131,15 @@ public class CommanderDAOImpl implements CommanderDAO {
                 int articleId = rs.getInt("Id");
                 String marque = rs.getString("Marque");
                 String nom = rs.getString("Nom");
-                double prix = rs.getDouble("Prix_unite");
-                double quantite = rs.getDouble("Quantite");
+                double prix_unit = rs.getDouble("Prix_unite");
+                double prix_grp = rs.getDouble("Prix_groupe");
+                int valeur_lot = rs.getInt("valeur_lot");
                 double stock = rs.getDouble("stock");
 
                 //int articleId, String articleMarque, String articleNom,
                 // double articlePrixUnite, double articlePrixGroupe, int articleValeurLot, double articleStock
 
-                Article article = new Article(articleId, marque, nom, prix, quantite, stock); //verifier si on peut faire un nouvel article avec seulement son id
+                Article article = new Article(articleId, marque, nom, prix_unit, prix_grp, valeur_lot, stock); //verifier si on peut faire un nouvel article avec seulement son id
 
                 articles.add(article);
             }
