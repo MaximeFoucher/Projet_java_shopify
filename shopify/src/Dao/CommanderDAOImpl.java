@@ -1,6 +1,6 @@
 package Dao;
 
-import Modele.Commander;
+import Modele.*;
 //import Modele.Profil;
 
 import java.sql.*;
