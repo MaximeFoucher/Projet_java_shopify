@@ -58,9 +58,13 @@ public class DaoFactory {
     }
 
     /**
-     * Récupération du Dao pour l'article
-     * @return : objet de la classe ArticleDaoImpl
+     * Récupération du Dao pour les commandes
+     * @return : objet de la classe CommanderDAOImpl
      */
+    public CommanderDAO getCommanderDAO() {
+        // Retourner un objet de CommanderDAOImpl qui implémente CommanderDAO
+        return new CommanderDAOImpl(this);
+    }
     public ArticleDao getArticleDao() {
         // Retourner un objet de ProduitDAOImpl qui implémente ProduitDAO
         return new ArticleDaoImpl(this);
