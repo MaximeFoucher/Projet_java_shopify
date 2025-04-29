@@ -1,17 +1,18 @@
 package Modele;
 
-import java.util.List;
-
-public class Client {
+public class Profil {
     private int id;
     private String mdp;
     private String name;
+    private boolean admin;
 
-    public Client(int id, String mdp, String name) {
+    public Profil(int id, String mdp, String name, boolean admin) {
         this.id = id;
         this.mdp = mdp;
         this.name = name;
+        this.admin = admin;
     }
+
 
     public int getId() {
         return id;
@@ -33,6 +34,14 @@ public class Client {
     public void setName(String name) {
         this.name = name;
     }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+
 
 
 }
