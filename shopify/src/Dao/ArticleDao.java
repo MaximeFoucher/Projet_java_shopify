@@ -9,5 +9,4 @@ public interface ArticleDao {
     public void ajouter(Article article);
     public Article modifier(Article article);
     public void supprimer(Article article);
-
 }

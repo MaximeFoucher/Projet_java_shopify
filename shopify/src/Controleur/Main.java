@@ -1,30 +1,47 @@
 package Controleur;
 
-import java.sql.*;
-import Dao.*;
-import Modele.*;
-import Vue.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-public class Main {
-    public static void main(String[] args) {
+public class Main extends Application {
 
-//        DaoFactory dao = DaoFactory.getInstance("shopify", "root", "");
-//        ArticleDao artdao = new ArticleDaoImpl(dao);
-//        VueArticle vueart = new VueArticle();
-//
-//        ArrayList<Article> artciles = artdao.getAll();
-//        vueart.afficherListeArticle(artciles);
-//        Article newarticle = new Article(0, "Nestle", "Chocolat", 5, 4, 2, 50);
-//        artdao.ajouter(newarticle);
-//        artciles = artdao.getAll();
-//        vueart.afficherListeArticle(artciles);
+    private Stage stage;
 
-
-
-
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        this.stage = primaryStage;
+        showConnexionView();
     }
 
+    public void showConnexionView() throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/ConnexionView.fxml"));
+        Parent root = loader.load();
+
+        // Lier le contrôleur à l'application principale
+        ConnexionController controller = loader.getController();
+        controller.setMainApp(this);
+
+        stage.setTitle("Connexion");
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+
+    public void switchToAdminView() throws Exception {
+        // Exemple provisoire
+        System.out.println("Redirection vers l'interface Admin (à implémenter)");
+        // Tu mettras ici le code pour charger AdminView.fxml quand tu l'auras
+    }
+
+    public void switchToClientView() throws Exception {
+        // Exemple provisoire
+        System.out.println("Redirection vers l'interface Client (à implémenter)");
+        // Tu mettras ici le code pour charger ClientView.fxml quand tu l'auras
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

@@ -1,6 +1,6 @@
 package Dao;
 
-import Modele.Commander;
+import Modele.*;
 //import Modele.Profil;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ public class CommanderDAOImpl implements CommanderDAO {
     }
 
     @Override
-    public boolean ajouterCommande(Commander commande, Profil profil) {
+    public boolean ajouterCommande(Commander commande, clients profil) {
         //ajoute une commande si le panier à deja ete reglé
         try (Connection connexion = daoFactory.getConnection()) {
             // Vérifier s'il existe déjà une commande non payée avec l'id du profil
@@ -52,7 +52,7 @@ public class CommanderDAOImpl implements CommanderDAO {
 
 
     @Override
-    public List<Commander> getCommandesClient(Profil profil) {
+    public List<Commander> getCommandesClient(clients profil) {
         // avoir toutes les commandes du client et le panier
         List<Commander> commandes = new ArrayList<>();
         try (Connection connexion = daoFactory.getConnection()){
@@ -133,12 +133,13 @@ public class CommanderDAOImpl implements CommanderDAO {
                 String nom = rs.getString("Nom");
                 double prix = rs.getDouble("Prix_unite");
                 double quantite = rs.getDouble("Quantite");
+                int valeurLot = rs.getInt("Valeur_lot");
                 double stock = rs.getDouble("stock");
 
                 //int articleId, String articleMarque, String articleNom,
                 // double articlePrixUnite, double articlePrixGroupe, int articleValeurLot, double articleStock
 
-                Article article = new Article(articleId, marque, nom, prix, quantite, stock); //verifier si on peut faire un nouvel article avec seulement son id
+                Article article = new Article(articleId, marque, nom, prix, quantite, valeurLot, stock); //verifier si on peut faire un nouvel article avec seulement son id
 
                 articles.add(article);
             }
@@ -147,6 +148,21 @@ public class CommanderDAOImpl implements CommanderDAO {
         }
 
         return articles;
+    }
+
+    @Override
+    public int getArticleQuantite(Commander commande, Article article) {
+        // la quantié d'un article dans une commande
+        int quantite = -1;
+
+
+        try (Connection connexion = daoFactory.getConnection()) {
+
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la récupération des articles : " + e.getMessage());
+        }
+
+        return quantite;
     }
 
 }
