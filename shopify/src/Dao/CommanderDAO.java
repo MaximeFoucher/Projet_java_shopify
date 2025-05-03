@@ -8,4 +8,6 @@ public interface CommanderDAO {
     List<Commander> getCommandesClient(Client client);
     int getIdClient(Commander commande);
     List<Article> getArticlesCommande(Commander commande);
-}
+    Client getClientFromCommande(Commander commande);
+    public int getQuantiteArticleFromCommande(Commander commande, Article article);
+    }
