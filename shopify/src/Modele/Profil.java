@@ -1,17 +1,20 @@
 package Modele;
 
-import java.util.List;
-
-public class clients {
+public class Profil {
     private int id;
     private String mdp;
     private String name;
-    private List<clients> clients;
+    private String email;
 
-    public clients(int id, String mdp, String name) {
+    public Profil(int id, String mdp, String name, String email) {
         this.id = id;
         this.mdp = mdp;
         this.name = name;
+        this.email = email;
+    }
+
+    public String getRole() {
+        return "Utilisateur";
     }
 
     public int getId() {
@@ -35,12 +38,11 @@ public class clients {
         this.name = name;
     }
 
-    public List<clients> getClients() {
-        return clients;
+    public String getEmail () {
+        return email;
     }
-    public void setClients(List<clients> clients) {
-        this.clients = clients;
+    public void setEmail (String email) {
+        this.email = email;
     }
 
 }
-

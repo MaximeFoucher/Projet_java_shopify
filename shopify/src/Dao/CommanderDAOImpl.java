@@ -15,7 +15,7 @@ public class CommanderDAOImpl implements CommanderDAO {
     }
 
     @Override
-    public boolean ajouterCommande(Commander commande, clients profil) {
+    public boolean ajouterCommande(Commander commande, Client client) {
         //ajoute une commande si le panier à deja ete reglé
         try (Connection connexion = daoFactory.getConnection()) {
             // Vérifier s'il existe déjà une commande non payée avec l'id du profil
@@ -25,7 +25,7 @@ public class CommanderDAOImpl implements CommanderDAO {
                     "WHERE p.Id = ? " +
                     "AND c.paye = false";
             PreparedStatement checkStmt = connexion.prepareStatement(checkSql);
-            checkStmt.setInt(1, profil.getId()); //prend l'id de profil
+            checkStmt.setInt(1, client.getId()); //prend l'id de profil
             ResultSet rs = checkStmt.executeQuery();
 
             if (rs.next()) {
@@ -52,7 +52,7 @@ public class CommanderDAOImpl implements CommanderDAO {
 
 
     @Override
-    public List<Commander> getCommandesClient(clients profil) {
+    public List<Commander> getCommandesClient(Client client) {
         // avoir toutes les commandes du client et le panier
         List<Commander> commandes = new ArrayList<>();
         try (Connection connexion = daoFactory.getConnection()){
@@ -65,7 +65,7 @@ public class CommanderDAOImpl implements CommanderDAO {
                     "JOIN article a ON a.Id = i.Id_article " +
                     "WHERE p.Id = ? ";
             PreparedStatement stmt = connexion.prepareStatement(sql);
-            stmt.setInt(1, profil.getId()); //id du client
+            stmt.setInt(1, client.getId()); //id du client
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -131,15 +131,15 @@ public class CommanderDAOImpl implements CommanderDAO {
                 int articleId = rs.getInt("Id");
                 String marque = rs.getString("Marque");
                 String nom = rs.getString("Nom");
-                double prix = rs.getDouble("Prix_unite");
-                double quantite = rs.getDouble("Quantite");
-                int valeurLot = rs.getInt("Valeur_lot");
+                double prix_unit = rs.getDouble("Prix_unite");
+                double prix_grp = rs.getDouble("Prix_groupe");
+                int valeur_lot = rs.getInt("valeur_lot");
                 double stock = rs.getDouble("stock");
 
                 //int articleId, String articleMarque, String articleNom,
                 // double articlePrixUnite, double articlePrixGroupe, int articleValeurLot, double articleStock
 
-                Article article = new Article(articleId, marque, nom, prix, quantite, valeurLot, stock); //verifier si on peut faire un nouvel article avec seulement son id
+                Article article = new Article(articleId, marque, nom, prix_unit, prix_grp, valeur_lot, stock); //verifier si on peut faire un nouvel article avec seulement son id
 
                 articles.add(article);
             }
@@ -148,21 +148,6 @@ public class CommanderDAOImpl implements CommanderDAO {
         }
 
         return articles;
-    }
-
-    @Override
-    public int getArticleQuantite(Commander commande, Article article) {
-        // la quantié d'un article dans une commande
-        int quantite = -1;
-
-
-        try (Connection connexion = daoFactory.getConnection()) {
-
-        } catch (SQLException e) {
-            System.out.println("Erreur lors de la récupération des articles : " + e.getMessage());
-        }
-
-        return quantite;
     }
 
 }

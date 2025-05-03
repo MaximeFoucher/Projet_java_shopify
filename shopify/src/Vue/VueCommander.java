@@ -1,17 +1,12 @@
 package Vue;
 
-import Dao.CommanderDAO;
 import Dao.DaoFactory;
-import Modele.Commander;
-import Dao.CommanderDAOImpl;
-import Dao.CommanderDAO;
 import Modele.*;
-import Modele.Article;
+import Dao.CommanderDAOImpl;
 
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class VueCommander {
     public void afficherCommande(Commander achat, DaoFactory dao) {
@@ -19,20 +14,20 @@ public class VueCommander {
 
         CommanderDAOImpl commanderDAO = new CommanderDAOImpl(dao);  // Crée une instance de CommanderDAOImpl
         int idClient = commanderDAO.getIdClient(achat);
-        // recuperer tous les attribus pour faire le client donc nom et psw
 
-        Clients client = new clients(idClient); // recuperer le client avec son id
+        Client client = new Client(idClient); // recuperer le client avec son id
         List<Article> articles = commanderDAO.getArticlesCommande(achat); //recupere tous les articles d'une commande
 
+
         // Afficher les informations du client et du produit pour l'objet achat en paramètre
-        System.out.println("Id Client : " + idClient + " Nom : " + client.getName()
+        System.out.println("Id Client : " + idClient + " Nom : " + client.getclientNom()
                 + " commande note : " + achat.getNote());
 
         // Afficher tous les articles associés à la commande
         for (Article article : articles) {
-            System.out.println("Nom du produit : " + article.getArticleNom()
-                    + " | Prix : " + article.getArticlePrixUnite()
-                    + " | Quantité : " + commanderDAO.getArticleQuantite(achat, article)); //rajouter la quantité donc join article a commande pour avoir la
+            System.out.println("Nom du produit : " + article.getProduitNom()
+                    + " | Prix : " + article.getProduitPrix()
+                    + " | Quantité : " + article.getQuantite());
         }
     }
 

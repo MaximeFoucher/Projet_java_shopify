@@ -4,10 +4,8 @@ import Modele.*;
 import java.util.List;
 
 public interface CommanderDAO {
-    boolean ajouterCommande(Commander commande, clients profil);
-    List<Commander> getCommandesClient(clients profil);
+    boolean ajouterCommande(Commander commande, Client client);
+    List<Commander> getCommandesClient(Client client);
     int getIdClient(Commander commande);
     List<Article> getArticlesCommande(Commander commande);
-    int getArticleQuantite(Commander commande, Article article);
-
-    }
+}
