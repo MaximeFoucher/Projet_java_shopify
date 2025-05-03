@@ -16,7 +16,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="file://$MODULE_DIR$/../lib" />
@@ -26,5 +26,6 @@
         <jarDirectory url="file://$MODULE_DIR$/../lib" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="library" exported="" name="OpenJFX 11" level="application" />
   </component>
 </module>
