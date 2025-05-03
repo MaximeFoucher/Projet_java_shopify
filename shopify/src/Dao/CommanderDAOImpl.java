@@ -113,6 +113,63 @@ public class CommanderDAOImpl implements CommanderDAO {
     }
 
     @Override
+    public Client getClientFromCommande(Commander commande) {
+        Client client = null;
+
+        try (Connection connexion = daoFactory.getConnection()) {
+            String sql = "SELECT p.Id, p.Mdp, p.Nom, p.Email " +
+                    "FROM profil p " +
+                    "JOIN historique h ON p.Id = h.Id_profil " +
+                    "JOIN commande c ON h.Id_commande = c.Id " +
+                    "WHERE c.Id = ?";
+
+            PreparedStatement stmt = connexion.prepareStatement(sql);
+            stmt.setInt(1, commande.getCommandeId());
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int id = rs.getInt("Id");
+                String mdp = rs.getString("Mdp");
+                String nom = rs.getString("Nom");
+                String email = rs.getString("Email");
+
+                client = new Client(nom, email, id, mdp); // appel du constructeur Client
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la récupération du client : " + e.getMessage());
+        }
+
+        return client;
+    }
+
+    @Override
+    public int getQuantiteArticleFromCommande(Commander commande, Article article) {
+        int quantiteArticle = -1;
+
+        try (Connection connexion = daoFactory.getConnection()) {
+            String sql = "SELECT Quantite FROM item WHERE Id_commande = ? AND Id_article = ?";
+            PreparedStatement stmt = connexion.prepareStatement(sql);
+            stmt.setInt(1, commande.getCommandeId());
+            stmt.setInt(2, article.getArticleId());
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                quantiteArticle = rs.getInt("Quantite");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la récupération de la quantité de l'article : " + e.getMessage());
+        }
+
+        return quantiteArticle;
+    }
+
+
+
+
+    @Override
     public List<Article> getArticlesCommande(Commander commande) {
         // avoir tous les articles liés à une commande
         List<Article> articles = new ArrayList<>();
