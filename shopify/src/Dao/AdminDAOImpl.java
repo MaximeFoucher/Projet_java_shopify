@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AdminDAOImpl implements ProfilDao {
+public class AdminDAOImpl implements ProfilDao {
     private Connection connexion;
     
     public AdminDAOImpl(Connection connexion) {
