@@ -4,15 +4,18 @@ public class Profil {
     private int id;
     private String mdp;
     private String name;
-    private boolean admin;
+    private String email;
 
-    public Profil(int id, String mdp, String name, boolean admin) {
+    public Profil(int id, String mdp, String name, String email) {
         this.id = id;
         this.mdp = mdp;
         this.name = name;
-        this.admin = admin;
+        this.email = email;
     }
 
+    public String getRole() {
+        return "Utilisateur";
+    }
 
     public int getId() {
         return id;
@@ -35,14 +38,11 @@ public class Profil {
         this.name = name;
     }
 
-    public boolean isAdmin() {
-        return admin;
+    public String getEmail () {
+        return email;
     }
-    public void setAdmin(boolean admin) {
-        this.admin = admin;
+    public void setEmail (String email) {
+        this.email = email;
     }
-
-
 
 }
-
