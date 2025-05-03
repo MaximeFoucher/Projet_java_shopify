@@ -1,7 +1,6 @@
 package Dao;
 
 import Modele.*;
-
 import java.util.List;
 
 public interface ProfilDao {
