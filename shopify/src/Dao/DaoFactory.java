@@ -2,7 +2,6 @@ package Dao;
 
 
 import java.sql.*;
-import java.util.ArrayList;
 
 /**
  * La DAO Factory (DaoFactory.java) permet d'initialiser le DAO en chargeant notamment les drivers nécessaires
@@ -69,6 +68,13 @@ public class DaoFactory {
         // Retourner un objet de ProduitDAOImpl qui implémente ProduitDAO
         return new ArticleDaoImpl(this);
     }
+    public ProfilDao getProfilDao(boolean isAdmin) {
+        if (isAdmin) {
+            return new AdminDAOImpl(this);
+        } else {
+            return new ClientDAOImpl(this);
+        }
+    }
 
 
     /**
@@ -86,4 +92,6 @@ public class DaoFactory {
             System.out.println("Erreur de déconnexion à la base de données");
         }
     }
+
+
 }
