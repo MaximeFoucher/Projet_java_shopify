@@ -1,16 +1,12 @@
 package Vue;
 
-import Dao.CommanderDAO;
 import Dao.DaoFactory;
 import Modele.*;
 import Dao.CommanderDAOImpl;
-import Dao.CommanderDAO;
-
 
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class VueCommander {
     public void afficherCommande(Commander achat, DaoFactory dao) {
@@ -19,7 +15,7 @@ public class VueCommander {
         CommanderDAOImpl commanderDAO = new CommanderDAOImpl(dao);  // Crée une instance de CommanderDAOImpl
         int idClient = commanderDAO.getIdClient(achat);
 
-        Profil client = new Profil(idClient); // recuperer le client avec son id
+        Client client = new Client(idClient); // recuperer le client avec son id
         List<Article> articles = commanderDAO.getArticlesCommande(achat); //recupere tous les articles d'une commande
 
 

@@ -15,7 +15,7 @@ public class CommanderDAOImpl implements CommanderDAO {
     }
 
     @Override
-    public boolean ajouterCommande(Commander commande, Profil profil) {
+    public boolean ajouterCommande(Commander commande, Client client) {
         //ajoute une commande si le panier à deja ete reglé
         try (Connection connexion = daoFactory.getConnection()) {
             // Vérifier s'il existe déjà une commande non payée avec l'id du profil
@@ -25,7 +25,7 @@ public class CommanderDAOImpl implements CommanderDAO {
                     "WHERE p.Id = ? " +
                     "AND c.paye = false";
             PreparedStatement checkStmt = connexion.prepareStatement(checkSql);
-            checkStmt.setInt(1, profil.getId()); //prend l'id de profil
+            checkStmt.setInt(1, client.getId()); //prend l'id de profil
             ResultSet rs = checkStmt.executeQuery();
 
             if (rs.next()) {
@@ -52,7 +52,7 @@ public class CommanderDAOImpl implements CommanderDAO {
 
 
     @Override
-    public List<Commander> getCommandesClient(Profil profil) {
+    public List<Commander> getCommandesClient(Client client) {
         // avoir toutes les commandes du client et le panier
         List<Commander> commandes = new ArrayList<>();
         try (Connection connexion = daoFactory.getConnection()){
@@ -65,7 +65,7 @@ public class CommanderDAOImpl implements CommanderDAO {
                     "JOIN article a ON a.Id = i.Id_article " +
                     "WHERE p.Id = ? ";
             PreparedStatement stmt = connexion.prepareStatement(sql);
-            stmt.setInt(1, profil.getId()); //id du client
+            stmt.setInt(1, client.getId()); //id du client
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
