@@ -15,38 +15,23 @@ public class CommanderDAOImpl implements CommanderDAO {
     }
 
     @Override
-    public boolean ajouterCommande(Commander commande, Client client) {
+    public void ajouterCommande(Commander commande, Client client) {
         //ajoute une commande si le panier à deja ete reglé
         try (Connection connexion = daoFactory.getConnection()) {
             // Vérifier s'il existe déjà une commande non payée avec l'id du profil
-            String checkSql = "SELECT COUNT(*) FROM profil p " +
-                    "JOIN historique h ON p.Id = h.Id_profil " +
-                    "JOIN commande c ON h.Id_commande = c.Id_commande " +
-                    "WHERE p.Id = ? " +
-                    "AND c.paye = false";
-            PreparedStatement checkStmt = connexion.prepareStatement(checkSql);
-            checkStmt.setInt(1, client.getId()); //prend l'id de profil
-            ResultSet rs = checkStmt.executeQuery();
+            if (VerifierExistancePanier(commande, client)) {
 
-            if (rs.next()) {
-                int count = rs.getInt(1);
-                if (count > 0) {
-                    System.out.println("Il existe déjà une commande non payée. Impossible d'ajouter une nouvelle commande. Il faut regler le panier");
-                    return false;
-                }
+                // Sinon, ajouter la nouvelle commande et le reste est en AI ou valeur par defaut
+                String sql = "INSERT INTO commande (note) VALUES (?)";
+                PreparedStatement stmt = connexion.prepareStatement(sql);
+                stmt.setInt(1, commande.getNote());
+
+                stmt.executeUpdate();
+
             }
-
-            // Sinon, ajouter la nouvelle commande et le reste est en AI ou valeur par defaut
-            String sql = "INSERT INTO commande (note) VALUES (?)";
-            PreparedStatement stmt = connexion.prepareStatement(sql);
-            stmt.setInt(1, commande.getNote());
-
-            stmt.executeUpdate();
-            return true;
 
         } catch (SQLException e) {
             System.out.println("Erreur lors de l'ajout d'une commande : " + e.getMessage());
-            return false;
         }
     }
 
@@ -208,8 +193,125 @@ public class CommanderDAOImpl implements CommanderDAO {
     }
 
     @Override
-    public void ajouterArticleDansCommande(Commander commande, Article article) {
+    public boolean VerifierExistancePanier(Commander commande, Client client) {
+        try (Connection connexion = daoFactory.getConnection()) {
+            /// verification qu'un panier est en cours
+            /// return True si le panier existe, False sinon
 
+            String checkSql = "SELECT COUNT(*) FROM profil p " +
+                    "JOIN historique h ON p.Id = h.Id_profil " +
+                    "JOIN commande c ON h.Id_commande = c.Id_commande " +
+                    "WHERE p.Id = ? " +
+                    "AND c.paye = false";
+            PreparedStatement checkStmt = connexion.prepareStatement(checkSql);
+            checkStmt.setInt(1, client.getId()); //prend l'id de profil
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                if (count > 0) {
+                    System.out.println("Il existe déjà une commande non payée. Impossible d'ajouter une nouvelle commande. Il faut regler le panier");
+                    return true;
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la verification panier : " + e.getMessage());
+
+        }
+        return false;
+
+    }
+
+    public void MAJTableCommande(Commander commande) {
+        try (Connection connexion = daoFactory.getConnection()) {
+
+            // Étape 1 : Récupérer la somme des Notes des items
+            String sql = "SELECT SUM(Note) FROM item WHERE Id_commande = ?";
+            int totalNote = 0;
+
+            try (PreparedStatement stmt = connexion.prepareStatement(sql)) {
+                stmt.setInt(1, commande.getCommandeId());
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    totalNote = rs.getInt(1);
+                }
+            }
+
+            // Étape 2 : Mettre à jour la Note dans la table commande
+            String updateSql = "UPDATE commande SET Note = ? WHERE Id_commande = ?";
+            try (PreparedStatement updateStmt = connexion.prepareStatement(updateSql)) {
+                updateStmt.setInt(1, totalNote);
+                updateStmt.setInt(2, commande.getCommandeId());
+                updateStmt.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la mise à jour de la table commande : " + e.getMessage());
+        }
+    }
+
+
+
+    @Override
+    public void ajouterArticleDansCommande(Commander commande, Article article, Client client, int quantiteArticle) {
+        /// ajout d'un article dans une commande
+        try (Connection connexion = daoFactory.getConnection()) {
+            /// ajoute l'article dans la commande en cours (donc un panier)
+            /// ajouter article dans item avec le bon prix
+            /// mettre à jour la table commande
+
+            int prix =0;
+            String sql2 = "SELECT Prix_unite, Prix_groupe, valeur_lot FROM article WHERE Id_article = ?";
+            PreparedStatement stmt2 = connexion.prepareStatement(sql2);
+            stmt2.setInt(1, article.getArticleId());
+            ResultSet rs = stmt2.executeQuery();
+            if (rs.next()) {
+                int prix_unite = rs.getInt("prix_unite");
+                int prix_groupe = rs.getInt("prix_groupe");
+                int valeur_lot = rs.getInt("quantite_groupe");
+                /// recupere les valeurs
+
+                if (valeur_lot > 0 && prix_groupe > 0 && quantiteArticle >= valeur_lot) {
+                    int nbGroupes = quantiteArticle / valeur_lot;
+                    int reste = quantiteArticle % valeur_lot;
+                    prix = nbGroupes * prix_groupe + reste * prix_unite;
+                } else {
+                    prix = quantiteArticle * prix_unite;
+                }
+            }
+
+            /// ajoute dans la bdd (dans item)
+            String sql = "INSERT INTO item VALUES Id_article = ?, Id_commande = ?, Quantité = ?, Prix = ?)";
+            PreparedStatement stmt = connexion.prepareStatement(sql);
+            stmt.setInt(1, article.getArticleId());
+            stmt.setInt(2, commande.getCommandeId());
+            stmt.setInt(3, quantiteArticle);
+            stmt.setInt(4, prix);
+            stmt.executeUpdate();
+
+            /// mise à jour de la table
+            MAJTableCommande(commande);
+
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'ajout d'un article dans la commande : " + e.getMessage());
+
+        }
+    }
+
+    @Override
+    public void reglerPanier(Commander commande, Client client) {
+        /// regler le panier
+        try (Connection connexion = daoFactory.getConnection()) {
+            /// mettre le boolean à true
+            /// faire un nouveau panier
+            commande.setPaye();
+            ajouterCommande(commande, client);
+
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'ajout d'un article dans la commande : " + e.getMessage());
+
+        }
     }
 
 }

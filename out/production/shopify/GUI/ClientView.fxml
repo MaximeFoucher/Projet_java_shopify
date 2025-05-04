@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import Controleur.ConnexionController?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Controleur.ClientController"
+      spacing="15" alignment="CENTER">
+
+    <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
+
+    <Label text="Bienvenue dans votre espace client" style="-fx-font-size: 18px;"/>
+    <Label fx:id="nomLabel" text="Nom du client" style="-fx-font-size: 14px; -fx-text-fill: #333333;"/>
+
+    <Button text="Voir mes commandes" onAction="#voirCommandes"/>
+    <Button text="Se déconnecter" onAction="#deconnexion"/>
+</VBox>
