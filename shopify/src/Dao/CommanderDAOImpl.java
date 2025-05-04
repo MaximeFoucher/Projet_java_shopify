@@ -207,4 +207,9 @@ public class CommanderDAOImpl implements CommanderDAO {
         return articles;
     }
 
+    @Override
+    public void ajouterArticleDansCommande(Commander commande, Article article) {
+
+    }
+
 }

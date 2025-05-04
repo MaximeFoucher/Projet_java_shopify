@@ -2,7 +2,8 @@ package Controleur;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import Modele.Client;
+import Modele.*;
+import Controleur.*;
 
 public class ClientController {
 
@@ -23,6 +24,11 @@ public class ClientController {
 
     @FXML
     private void voirCommandes() {
+        try{
+            mainApp.switchToCommandeClient(mainApp.getClientConnecte());
+        } catch (Exception e) {
+        e.printStackTrace();
+    }
         // À implémenter : changer de page ou afficher un tableau
         System.out.println("→ Affichage des commandes du client");
     }

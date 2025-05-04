@@ -10,4 +10,5 @@ public interface CommanderDAO {
     List<Article> getArticlesCommande(Commander commande);
     Client getClientFromCommande(Commander commande);
     public int getQuantiteArticleFromCommande(Commander commande, Article article);
+    public void ajouterArticleDansCommande(Commander commande, Article article);
     }
