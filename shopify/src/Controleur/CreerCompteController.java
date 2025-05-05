@@ -34,7 +34,7 @@ public class CreerCompteController {
         Client nouveau = new Client(nom, email, 0, mdp);
         ClientDAOImpl dao = new ClientDAOImpl(mainApp.getConnexion()); // ou mainApp.getConnexion() si tu préfères
 
-        dao.ajouter(nouveau);
+        dao.AjouterClient(nouveau);
         showAlert("Succès", "Compte créé avec succès !");
         try {
             mainApp.showConnexionView();

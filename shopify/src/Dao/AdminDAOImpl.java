@@ -1,13 +1,12 @@
 package Dao;
 
-import Modele.Admin;
-import Modele.Profil;
+import Modele.*;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdminDAOImpl implements ProfilDao {
+public class AdminDAOImpl implements AdminDAO {
     private Connection connexion;
     
     public AdminDAOImpl(Connection connexion) {

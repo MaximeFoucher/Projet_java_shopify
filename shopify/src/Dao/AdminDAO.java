@@ -3,9 +3,8 @@ package Dao;
 import Modele.*;
 import java.util.List;
 
-public interface ProfilDao {
+public interface AdminDAO {
     void ajouter(Profil Profil);
-    Client FindClientFromId(int id);
     Profil RechercheEmail(String email);
     List<Profil> ToutLister();
 }
