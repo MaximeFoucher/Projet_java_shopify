@@ -15,20 +15,19 @@ public class CommanderDAOImpl implements CommanderDAO {
     }
 
     @Override
-    public void ajouterCommande(Commander commande, Client client) {
+    public void ajouterCommande(Client client) {
         //ajoute une commande si le panier à deja ete reglé
         try (Connection connexion = daoFactory.getConnection()) {
-            // Vérifier s'il existe déjà une commande non payée avec l'id du profil
-            if (VerifierExistancePanier(commande, client)) {
 
-                // Sinon, ajouter la nouvelle commande et le reste est en AI ou valeur par defaut
+
+                /// ajouter la nouvelle commande et le reste est en AI ou valeur par defaut
                 String sql = "INSERT INTO commande (note) VALUES (?)";
                 PreparedStatement stmt = connexion.prepareStatement(sql);
-                stmt.setInt(1, commande.getNote());
+                stmt.setInt(1, 0);
 
                 stmt.executeUpdate();
 
-            }
+
 
         } catch (SQLException e) {
             System.out.println("Erreur lors de l'ajout d'une commande : " + e.getMessage());
@@ -150,8 +149,6 @@ public class CommanderDAOImpl implements CommanderDAO {
 
         return quantiteArticle;
     }
-
-
 
 
     @Override
@@ -282,7 +279,7 @@ public class CommanderDAOImpl implements CommanderDAO {
             }
 
             /// ajoute dans la bdd (dans item)
-            String sql = "INSERT INTO item VALUES Id_article = ?, Id_commande = ?, Quantité = ?, Prix = ?)";
+            String sql = "INSERT INTO item VALUES Id_article = ?, Id_commande = ?, Quantité = ?, Prix = ?";
             PreparedStatement stmt = connexion.prepareStatement(sql);
             stmt.setInt(1, article.getArticleId());
             stmt.setInt(2, commande.getCommandeId());
@@ -306,7 +303,28 @@ public class CommanderDAOImpl implements CommanderDAO {
             /// mettre le boolean à true
             /// faire un nouveau panier
             commande.setPaye();
-            ajouterCommande(commande, client);
+            ajouterCommande(client);
+
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'ajout d'un article dans la commande : " + e.getMessage());
+
+        }
+    }
+
+    @Override
+    public void supprimerCommande(Commander commande){
+        try (Connection connexion = daoFactory.getConnection()) {
+            /// supprimer les items associés à la commande
+            String sql = "DELETE FROM item WHERE Id_commande = ?";
+            PreparedStatement stmt = connexion.prepareStatement(sql);
+            stmt.setInt(1, commande.getCommandeId());
+            stmt.executeUpdate();
+
+            /// supprimer la commande
+            String deletecommande = "DELETE FROM commande WHERE Id = ?";
+            PreparedStatement stmt2 = connexion.prepareStatement(deletecommande);
+            stmt2.setInt(1, commande.getCommandeId());
+            stmt2.executeUpdate();
 
         } catch (SQLException e) {
             System.out.println("Erreur lors de l'ajout d'un article dans la commande : " + e.getMessage());

@@ -164,22 +164,37 @@ public class ClientDAOImpl implements ClientDAO {
 
             DaoFactory daoFactory = new DaoFactory("shopify", "root", "");
             /// supprimer toutes les tables commandes et item qui sont liée
-        /// donc il faudrait faire la méthode supprimer commande dans CommandeDAOImpl
             /// supprimer dans la table historique
             /// supprimer le profil
 
 
+            CommanderDAOImpl commandeDao = new CommanderDAOImpl(daoFactory);
 
+            /// Récupérer toutes les commandes du client
+            String sqlCmds = "SELECT * FROM commande WHERE Id_client = ?";
+            PreparedStatement stmtCmds = connexion.prepareStatement(sqlCmds);
+            stmtCmds.setInt(1, client.getId());
+            ResultSet rs = stmtCmds.executeQuery();
 
-            /// ex de requete sql
-            String updateSql = "UPDATE profil SET Mdp = ?, Email = ?, Nom = ? WHERE Id = ?";
-            PreparedStatement stmt = connexion.prepareStatement(updateSql);
-            stmt.setString(1, client.getMdp());
-            stmt.setString(2, client.getEmail());
-            stmt.setString(3, client.getName());
-            stmt.setInt(4, client.getId());
-            stmt.executeUpdate();
+            while (rs.next()) {
+                int commandeId = rs.getInt("Id");
+                int note = rs.getInt("Note");
+                boolean paye = rs.getBoolean("Payé");
+                Commander commande = new Commander(commandeId, note, paye);
+                commandeDao.supprimerCommande(commande); /// Supprime la commande + items (la fonction le fait)
+            }
 
+            /// Supprimer l'historique
+            String deleteHistorique = "DELETE FROM historique WHERE Id_client = ?";
+            PreparedStatement stmtHist = connexion.prepareStatement(deleteHistorique);
+            stmtHist.setInt(1, client.getId());
+            stmtHist.executeUpdate();
+
+            /// Supprimer le profil
+            String deleteProfil = "DELETE FROM profil WHERE Id = ?";
+            PreparedStatement stmtProfil = connexion.prepareStatement(deleteProfil);
+            stmtProfil.setInt(1, client.getId());
+            stmtProfil.executeUpdate();
 
         } catch (SQLException e) {
             System.out.println("Erreur lors de la suppression du client : " + e.getMessage());

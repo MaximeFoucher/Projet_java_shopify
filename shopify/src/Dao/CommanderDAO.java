@@ -14,4 +14,5 @@ public interface CommanderDAO {
     public void MAJTableCommande(Commander commande);
     public void reglerPanier(Commander commande, Client client);
     public void ajouterArticleDansCommande(Commander commande, Article article, Client client, int quantiteArticle);
+    public void supprimerCommande(Commander commande);
     }
