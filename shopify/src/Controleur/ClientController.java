@@ -34,6 +34,15 @@ public class ClientController {
     }
 
     @FXML
+    private void retourPageAccueil() {
+        try{
+            mainApp.switchToPageAccueil();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     private void deconnexion() {
         try {
             mainApp.showConnexionView();

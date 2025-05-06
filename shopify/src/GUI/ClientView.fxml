@@ -15,5 +15,6 @@
     <Label fx:id="nomLabel" text="Nom du client" style="-fx-font-size: 14px; -fx-text-fill: #333333;"/>
 
     <Button text="Voir mes commandes" onAction="#voirCommandes"/>
+    <Button text="Retour page d'accueil" onAction="#retourPageAccueil"/>
     <Button text="Se déconnecter" onAction="#deconnexion"/>
 </VBox>

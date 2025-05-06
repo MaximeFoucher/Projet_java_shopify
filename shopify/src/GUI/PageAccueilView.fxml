@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.cell.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controleur.PageAccueilController"
+            prefHeight="600.0" prefWidth="800.0">
+
+    <!-- Barre de menu en haut -->
+    <top>
+        <MenuBar>
+            <Menu text="Mon Compte">
+                <MenuItem text="Voir profil" onAction="#handleVoirProfil"/>
+                <MenuItem text="Historique commandes" onAction="#handleVoirCommandes"/>
+                <MenuItem text="Se déconnecter" onAction="#handleLogout"/>
+            </Menu>
+        </MenuBar>
+    </top>
+
+    <!-- Liste des articles au centre -->
+    <center>
+        <VBox spacing="10.0">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <Label text="Articles disponibles" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+
+            <TableView fx:id="articleTable" prefHeight="400">
+                <columns>
+                    <TableColumn fx:id="colNom" text="Nom" prefWidth="150"/>
+                    <TableColumn fx:id="colMarque" text="Marque" prefWidth="100"/>
+                    <TableColumn fx:id="colPrix" text="Prix Unité (€)" prefWidth="120"/>
+                    <TableColumn fx:id="colAjouter" text="Action" prefWidth="120"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+
+</BorderPane>

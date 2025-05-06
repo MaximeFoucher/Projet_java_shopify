@@ -105,6 +105,17 @@ public class Main extends Application {
         stage.show();
     }
 
+    public void switchToPageAccueil() throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/PageAccueilView.fxml"));
+        Parent root = loader.load();
+        PageAccueilController controller = loader.getController();
+        controller.setMainApp(this);
+
+        stage.setTitle("Page accueil");
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+
     // ========================================
     // 🔧 Getters / Setters utiles dans les controllers
 

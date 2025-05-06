@@ -48,7 +48,7 @@ public class ConnexionController {
 
             if (client != null && client.getMdp().equals(password)) {
                 mainApp.setClientConnecte(client); // stocke le client
-                mainApp.switchToClientView();      // va sur la vue client
+                mainApp.switchToPageAccueil();      // va sur la page d'accueil
             } else {
                 showAlert("Échec de la connexion", "Email ou mot de passe incorrect.");
             }
