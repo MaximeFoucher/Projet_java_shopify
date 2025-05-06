@@ -1,7 +1,6 @@
 package Dao;
 
 import Modele.*;
-//import Modele.Profil;
 
 import java.sql.*;
 import java.util.ArrayList;
