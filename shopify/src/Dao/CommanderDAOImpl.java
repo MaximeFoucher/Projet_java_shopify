@@ -252,47 +252,77 @@ public class CommanderDAOImpl implements CommanderDAO {
 
     @Override
     public void ajouterArticleDansCommande(Commander commande, Article article, Client client, int quantiteArticle) {
-        /// ajout d'un article dans une commande
         try (Connection connexion = daoFactory.getConnection()) {
-            /// ajoute l'article dans la commande en cours (donc un panier)
-            /// ajouter article dans item avec le bon prix
-            /// mettre à jour la table commande
 
-            int prix =0;
-            String sql2 = "SELECT Prix_unite, Prix_groupe, valeur_lot FROM article WHERE Id_article = ?";
-            PreparedStatement stmt2 = connexion.prepareStatement(sql2);
-            stmt2.setInt(1, article.getArticleId());
-            ResultSet rs = stmt2.executeQuery();
-            if (rs.next()) {
-                int prix_unite = rs.getInt("prix_unite");
-                int prix_groupe = rs.getInt("prix_groupe");
-                int valeur_lot = rs.getInt("quantite_groupe");
-                /// recupere les valeurs
+            // Récupérer les infos sur l'article
+            int prix_unite = 0;
+            int prix_groupe = 0;
+            int valeur_lot = 0;
+            int prix_total = 0;
+
+            String sqlArticle = "SELECT Prix_unite, Prix_groupe, Quantite_groupe FROM article WHERE Id_article = ?";
+            PreparedStatement stmtArticle = connexion.prepareStatement(sqlArticle);
+            stmtArticle.setInt(1, article.getArticleId());
+            ResultSet rsArticle = stmtArticle.executeQuery();
+            if (rsArticle.next()) {
+                prix_unite = rsArticle.getInt("Prix_unite");
+                prix_groupe = rsArticle.getInt("Prix_groupe");
+                valeur_lot = rsArticle.getInt("Quantite_groupe");
 
                 if (valeur_lot > 0 && prix_groupe > 0 && quantiteArticle >= valeur_lot) {
                     int nbGroupes = quantiteArticle / valeur_lot;
                     int reste = quantiteArticle % valeur_lot;
-                    prix = nbGroupes * prix_groupe + reste * prix_unite;
+                    prix_total = nbGroupes * prix_groupe + reste * prix_unite;
                 } else {
-                    prix = quantiteArticle * prix_unite;
+                    prix_total = quantiteArticle * prix_unite;
                 }
             }
 
-            /// ajoute dans la bdd (dans item)
-            String sql = "INSERT INTO item VALUES Id_article = ?, Id_commande = ?, Quantité = ?, Prix = ?";
-            PreparedStatement stmt = connexion.prepareStatement(sql);
-            stmt.setInt(1, article.getArticleId());
-            stmt.setInt(2, commande.getCommandeId());
-            stmt.setInt(3, quantiteArticle);
-            stmt.setInt(4, prix);
-            stmt.executeUpdate();
+            // Vérifier si l'article est déjà dans la commande
+            String checkSql = "SELECT Quantite FROM item WHERE Id_article = ? AND Id_commande = ?";
+            PreparedStatement checkStmt = connexion.prepareStatement(checkSql);
+            checkStmt.setInt(1, article.getArticleId());
+            checkStmt.setInt(2, commande.getCommandeId());
+            ResultSet rsCheck = checkStmt.executeQuery();
 
-            /// mise à jour de la table
+            if (rsCheck.next()) {
+                // Déjà présent → on met à jour la quantité et le prix
+                int quantiteExistante = rsCheck.getInt("Quantite");
+                int nouvelleQuantite = quantiteExistante + quantiteArticle;
+
+                // Recalcul du prix total avec la nouvelle quantité
+                int nouveauPrix = 0;
+                if (valeur_lot > 0 && prix_groupe > 0 && nouvelleQuantite >= valeur_lot) {
+                    int nbGroupes = nouvelleQuantite / valeur_lot;
+                    int reste = nouvelleQuantite % valeur_lot;
+                    nouveauPrix = nbGroupes * prix_groupe + reste * prix_unite;
+                } else {
+                    nouveauPrix = nouvelleQuantite * prix_unite;
+                }
+
+                String updateSql = "UPDATE item SET Quantite = ?, Prix = ? WHERE Id_article = ? AND Id_commande = ?";
+                PreparedStatement updateStmt = connexion.prepareStatement(updateSql);
+                updateStmt.setInt(1, nouvelleQuantite);
+                updateStmt.setInt(2, nouveauPrix);
+                updateStmt.setInt(3, article.getArticleId());
+                updateStmt.setInt(4, commande.getCommandeId());
+                updateStmt.executeUpdate();
+            } else {
+                // Nouvel article → on l’insère
+                String insertSql = "INSERT INTO item (Id_article, Id_commande, Quantite, Prix) VALUES (?, ?, ?, ?)";
+                PreparedStatement insertStmt = connexion.prepareStatement(insertSql);
+                insertStmt.setInt(1, article.getArticleId());
+                insertStmt.setInt(2, commande.getCommandeId());
+                insertStmt.setInt(3, quantiteArticle);
+                insertStmt.setInt(4, prix_total);
+                insertStmt.executeUpdate();
+            }
+
+            // Mettre à jour le total de la commande
             MAJTableCommande(commande);
 
         } catch (SQLException e) {
             System.out.println("Erreur lors de l'ajout d'un article dans la commande : " + e.getMessage());
-
         }
     }
 
