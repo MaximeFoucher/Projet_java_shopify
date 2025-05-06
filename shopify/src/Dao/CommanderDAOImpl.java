@@ -34,7 +34,6 @@ public class CommanderDAOImpl implements CommanderDAO {
         }
     }
 
-
     @Override
     public List<Commander> getCommandesClient(Client client) {
         // avoir toutes les commandes du client et le panier
@@ -150,7 +149,6 @@ public class CommanderDAOImpl implements CommanderDAO {
         return quantiteArticle;
     }
 
-
     @Override
     public List<Article> getArticlesCommande(Commander commande) {
         // avoir tous les articles liés à une commande
@@ -247,8 +245,6 @@ public class CommanderDAOImpl implements CommanderDAO {
             System.out.println("Erreur lors de la mise à jour de la table commande : " + e.getMessage());
         }
     }
-
-
 
     @Override
     public void ajouterArticleDansCommande(Commander commande, Article article, Client client, int quantiteArticle) {
@@ -358,6 +354,38 @@ public class CommanderDAOImpl implements CommanderDAO {
 
         } catch (SQLException e) {
             System.out.println("Erreur lors de l'ajout d'un article dans la commande : " + e.getMessage());
+
+        }
+    }
+
+    @Override
+    public void viderPanier(Client client){
+        try (Connection connexion = daoFactory.getConnection()) {
+            /// recuperer l'id du panier en cours
+            /// supprimer les items associés au panier
+
+            /// Récupérer l'ID de la commande non payée liée au client
+            String sqlCommande = "SELECT commande.Id FROM commande " +
+                    "JOIN historique ON commande.Id = historique.Id_commande " +
+                    "JOIN profil ON historique.Id_profil = profil.Id " +
+                    "WHERE profil.Id = ? AND commande.Payé = false";
+            PreparedStatement stmt = connexion.prepareStatement(sqlCommande);
+            stmt.setInt(1, client.getId());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int idCommande = rs.getInt("Id");
+
+                /// Supprimer les items liés à cette commande
+                String sqlDeleteItems = "DELETE FROM item WHERE Id_commande = ?";
+                PreparedStatement deleteStmt = connexion.prepareStatement(sqlDeleteItems);
+                deleteStmt.setInt(1, idCommande);
+                deleteStmt.executeUpdate();
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la suppression des items dans le panier : " + e.getMessage());
 
         }
     }
