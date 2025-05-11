@@ -235,7 +235,7 @@ public class CommanderDAOImpl implements CommanderDAO {
         try (Connection connexion = daoFactory.getConnection()) {
 
             // Étape 1 : Récupérer la somme des Notes des items dans la commande
-            String sql = "SELECT SUM(Note) FROM commande WHERE Id = ?";
+            String sql = "SELECT SUM(Prix) FROM item WHERE Id_commande = ?";
             int totalNote = 0;
 
             try (PreparedStatement stmt = connexion.prepareStatement(sql)) {
@@ -259,9 +259,34 @@ public class CommanderDAOImpl implements CommanderDAO {
         }
     }
 
+    public boolean verifierNombreArticleDisponible(Article article, int quantiteArticle) {
+        /// commande qui retourne vrai si la quantité prise en parametre est inférieure au stock siponible
+        try (Connection connexion = daoFactory.getConnection()) {
+            String sql = "SELECT stock FROM article WHERE Id = ?";
+            try (PreparedStatement stmt = connexion.prepareStatement(sql)) {
+                stmt.setInt(1, article.getArticleId());
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    int stockDisponible = rs.getInt("stock");
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la vérification du stock : " + e.getMessage());
+        }
+        return false; // En cas d'erreur ou d'article non trouvé
+    }
+
     @Override
     public void ajouterArticleDansCommande(Commander commande, Article article, Client client, int quantiteArticle) {
         try (Connection connexion = daoFactory.getConnection()) {
+
+            /// verifie la quantité
+            // Vérifier si la quantité demandée est disponible
+            if (!verifierNombreArticleDisponible(article, quantiteArticle)) {
+                System.out.println("Quantité demandée supérieure au stock disponible pour l'article " + article.getArticleNom());
+                return;
+            }
 
             // Récupérer les infos sur l'article
             int prix_unite = 0;
@@ -327,7 +352,15 @@ public class CommanderDAOImpl implements CommanderDAO {
                 insertStmt.executeUpdate();
             }
 
-            // Mettre à jour le total de la commande
+            /// met à jour le stock disponible
+            String updateStockSql = "UPDATE article SET stock = stock - ? WHERE Id = ?";
+            PreparedStatement updateStockStmt = connexion.prepareStatement(updateStockSql);
+            updateStockStmt.setInt(1, quantiteArticle);
+            updateStockStmt.setInt(2, article.getArticleId());
+            updateStockStmt.executeUpdate();
+
+
+            /// Mettre à jour le total de la commande
             MAJTableCommande(commande);
 
         } catch (SQLException e) {
