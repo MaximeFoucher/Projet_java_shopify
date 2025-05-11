@@ -174,7 +174,11 @@ public class ClientDAOImpl implements ClientDAO {
             CommanderDAOImpl commandeDao = new CommanderDAOImpl(daoFactory);
 
             /// Récupérer toutes les commandes du client
-            String sqlCmds = "SELECT * FROM commande WHERE Id = ?";
+            String sqlCmds = "SELECT c.Id, c.Note, c.Payé FROM commande c " +
+                    "JOIN historique h ON c.Id = h.Id_commande " +
+                    "JOIN profil p ON p.Id = h.Id_profil " +
+                    "WHERE p.Id = ?";
+
             PreparedStatement stmtCmds = connexion.prepareStatement(sqlCmds);
             stmtCmds.setInt(1, client.getId());
             ResultSet rs = stmtCmds.executeQuery();
@@ -183,6 +187,7 @@ public class ClientDAOImpl implements ClientDAO {
                 int commandeId = rs.getInt("Id");
                 int note = rs.getInt("Note");
                 boolean paye = rs.getBoolean("Payé");
+
                 Commander commande = new Commander(commandeId, note, paye);
                 commandeDao.supprimerCommande(commande); /// Supprime la commande + items (la fonction le fait)
             }
