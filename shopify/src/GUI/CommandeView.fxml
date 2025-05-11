@@ -2,7 +2,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.*?>
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="Controleur.CommandeController" spacing="10" alignment="CENTER">
+      fx:controller="Controleur.CommandeController"
+      spacing="10" alignment="CENTER"
+      prefHeight="700.0" prefWidth="800.0">
+
     <Label text="Historique des commandes"/>
     <ListView fx:id="commandesList" prefHeight="200" prefWidth="400"/>
     <Button text="Retour" onAction="#retour"/>

@@ -7,7 +7,8 @@
 
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
       fx:controller="Controleur.ClientController"
-      spacing="15" alignment="CENTER">
+      spacing="15" alignment="CENTER"
+      prefHeight="700.0" prefWidth="800.0">
 
     <padding><Insets top="30" right="30" bottom="30" left="30"/></padding>
 

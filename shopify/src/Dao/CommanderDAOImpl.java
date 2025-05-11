@@ -255,14 +255,14 @@ public class CommanderDAOImpl implements CommanderDAO {
             int valeur_lot = 0;
             int prix_total = 0;
 
-            String sqlArticle = "SELECT Prix_unite, Prix_groupe, Quantite_groupe FROM article WHERE Id_article = ?";
+            String sqlArticle = "SELECT Prix_unite, Prix_groupe, valeur_lot FROM article WHERE Id = ?";
             PreparedStatement stmtArticle = connexion.prepareStatement(sqlArticle);
             stmtArticle.setInt(1, article.getArticleId());
             ResultSet rsArticle = stmtArticle.executeQuery();
             if (rsArticle.next()) {
                 prix_unite = rsArticle.getInt("Prix_unite");
                 prix_groupe = rsArticle.getInt("Prix_groupe");
-                valeur_lot = rsArticle.getInt("Quantite_groupe");
+                valeur_lot = rsArticle.getInt("valeur_lot");
 
                 if (valeur_lot > 0 && prix_groupe > 0 && quantiteArticle >= valeur_lot) {
                     int nbGroupes = quantiteArticle / valeur_lot;

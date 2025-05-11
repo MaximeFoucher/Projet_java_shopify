@@ -21,6 +21,10 @@ public class Main extends Application {
     // 👤 Client actuellement connecté
     private Client clientConnecte;
 
+    // Commande active à créer ou suivre
+    private Commander commandeActive;
+    private CommanderDAOImpl commandeDAO;
+
     // 🎬 Fenêtre principale JavaFX
     private Stage stage;
 
@@ -33,6 +37,9 @@ public class Main extends Application {
         // Initialisation de la DAO et de la connexion à la BDD
         this.daoFactory = DaoFactory.getInstance("shopify", "root", "");
         this.connexion = daoFactory.getConnection();
+
+        this.commandeDAO = new CommanderDAOImpl(this.daoFactory);
+
 
         // Affichage de la première vue : Connexion
         showConnexionView();
@@ -72,7 +79,7 @@ public class Main extends Application {
         controller.setMainApp(this);
         controller.initClientData(); // Injecte les données du client
 
-        stage.setTitle("Espace Client");
+        stage.setTitle("Panier cCient");
         stage.setScene(new Scene(root));
         stage.show();
     }
@@ -105,6 +112,19 @@ public class Main extends Application {
         stage.show();
     }
 
+    public void switchToPanier() throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/PanierView.fxml"));
+        Parent root = loader.load();
+
+        PanierController controller = loader.getController();
+        controller.setMainApp(this);
+
+        stage.setTitle("Panier");
+        stage.setScene(new Scene(root));
+        stage.show();
+
+    }
+
     public void switchToPageAccueil() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/PageAccueilView.fxml"));
         Parent root = loader.load();
@@ -127,13 +147,27 @@ public class Main extends Application {
         return this.daoFactory;
     }
 
+    public Client getClientConnecte() {
+        return this.clientConnecte;
+    }
+
+    public Commander getCommandeActive() {
+        return this.commandeActive;
+    }
+
+    public CommanderDAOImpl getCommandeDAO() {
+        return this.commandeDAO;
+    }
+
+
     public void setClientConnecte(Client client) {
         this.clientConnecte = client;
     }
 
-    public Client getClientConnecte() {
-        return this.clientConnecte;
+    public void setCommandeActive(Commander commande) {
+        this.commandeActive = commande;
     }
+
 
     // ========================================
     // 🧠 Méthode principale
