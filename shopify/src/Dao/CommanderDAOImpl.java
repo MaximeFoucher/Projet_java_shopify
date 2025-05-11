@@ -69,7 +69,7 @@ public class CommanderDAOImpl implements CommanderDAO {
                 int note = rs.getInt("Note");
                 boolean paye = rs.getBoolean("Payé");
 
-                int quantite = rs.getInt("Quantite");
+                int quantite = rs.getInt("Quantité");
                 double prix = rs.getDouble("Prix");
                 String nomArticle = rs.getString("Nom");
                 String marqueArticle = rs.getString("Marque");
@@ -145,7 +145,7 @@ public class CommanderDAOImpl implements CommanderDAO {
         int quantiteArticle = -1;
 
         try (Connection connexion = daoFactory.getConnection()) {
-            String sql = "SELECT Quantite FROM item WHERE Id_commande = ? AND Id_article = ?";
+            String sql = "SELECT Quantité FROM item WHERE Id_commande = ? AND Id_article = ?";
             PreparedStatement stmt = connexion.prepareStatement(sql);
             stmt.setInt(1, commande.getCommandeId());
             stmt.setInt(2, article.getArticleId());
@@ -153,7 +153,7 @@ public class CommanderDAOImpl implements CommanderDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                quantiteArticle = rs.getInt("Quantite");
+                quantiteArticle = rs.getInt("Quantité");
             }
         } catch (SQLException e) {
             System.out.println("Erreur lors de la récupération de la quantité de l'article : " + e.getMessage());
@@ -254,8 +254,8 @@ public class CommanderDAOImpl implements CommanderDAO {
     public void MAJTableCommande(Commander commande) {
         try (Connection connexion = daoFactory.getConnection()) {
 
-            // Étape 1 : Récupérer la somme des Notes des items
-            String sql = "SELECT SUM(Note) FROM item WHERE Id_commande = ?";
+            // Étape 1 : Récupérer la somme des Notes des items dans la commande
+            String sql = "SELECT SUM(Prix) FROM item WHERE Id_commande = ?";
             int totalNote = 0;
 
             try (PreparedStatement stmt = connexion.prepareStatement(sql)) {
@@ -267,7 +267,7 @@ public class CommanderDAOImpl implements CommanderDAO {
             }
 
             // Étape 2 : Mettre à jour la Note dans la table commande
-            String updateSql = "UPDATE commande SET Note = ? WHERE Id_commande = ?";
+            String updateSql = "UPDATE commande SET Note = ? WHERE Id = ?";
             try (PreparedStatement updateStmt = connexion.prepareStatement(updateSql)) {
                 updateStmt.setInt(1, totalNote);
                 updateStmt.setInt(2, commande.getCommandeId());
@@ -279,9 +279,34 @@ public class CommanderDAOImpl implements CommanderDAO {
         }
     }
 
+    public boolean verifierNombreArticleDisponible(Article article, int quantiteArticle) {
+        /// commande qui retourne vrai si la quantité prise en parametre est inférieure au stock siponible
+        try (Connection connexion = daoFactory.getConnection()) {
+            String sql = "SELECT stock FROM article WHERE Id = ?";
+            try (PreparedStatement stmt = connexion.prepareStatement(sql)) {
+                stmt.setInt(1, article.getArticleId());
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    int stockDisponible = rs.getInt("stock");
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la vérification du stock : " + e.getMessage());
+        }
+        return false; // En cas d'erreur ou d'article non trouvé
+    }
+
     @Override
     public void ajouterArticleDansCommande(Commander commande, Article article, Client client, int quantiteArticle) {
         try (Connection connexion = daoFactory.getConnection()) {
+
+            /// verifie la quantité
+            // Vérifier si la quantité demandée est disponible
+            if (!verifierNombreArticleDisponible(article, quantiteArticle)) {
+                System.out.println("Quantité demandée supérieure au stock disponible pour l'article " + article.getArticleNom());
+                return;
+            }
 
             // Récupérer les infos sur l'article
             int prix_unite = 0;
@@ -347,7 +372,15 @@ public class CommanderDAOImpl implements CommanderDAO {
                 insertStmt.executeUpdate();
             }
 
-            // Mettre à jour le total de la commande
+            /// met à jour le stock disponible
+            String updateStockSql = "UPDATE article SET stock = stock - ? WHERE Id = ?";
+            PreparedStatement updateStockStmt = connexion.prepareStatement(updateStockSql);
+            updateStockStmt.setInt(1, quantiteArticle);
+            updateStockStmt.setInt(2, article.getArticleId());
+            updateStockStmt.executeUpdate();
+
+
+            /// Mettre à jour le total de la commande
             MAJTableCommande(commande);
 
         } catch (SQLException e) {
@@ -422,5 +455,33 @@ public class CommanderDAOImpl implements CommanderDAO {
 
         }
     }
+
+    public Commander getCommanderFromClient(Client client) {
+        Commander commande = null;
+
+        try (Connection connexion = daoFactory.getConnection()) {
+            String sql = "SELECT c.* FROM commande c " +
+                    "JOIN historique h ON c.Id = h.Id_commande " +
+                    "JOIN profil p ON h.Id_profil = p.Id " +
+                    "WHERE p.Id = ? AND (c.payé IS NULL OR c.payé = FALSE)";
+
+            PreparedStatement stmt = connexion.prepareStatement(sql);
+            stmt.setInt(1, client.getId());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int idCommande = rs.getInt("Id");
+                int note = rs.getInt("note");
+                boolean paye = rs.getBoolean("payé");
+                commande = new Commander(idCommande, note, paye);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la récupération de la commande du client : " + e.getMessage(), e);
+        }
+
+        return commande;
+    }
+
 
 }

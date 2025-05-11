@@ -18,4 +18,6 @@ public interface CommanderDAO {
     public void ajouterArticleDansCommande(Commander commande, Article article, Client client, int quantiteArticle);
     public void supprimerCommande(Commander commande);
     public void viderPanier(Client client);
-    }
+    Commander getCommanderFromClient(Client client);
+    public boolean verifierNombreArticleDisponible(Article article, int quantiteArticle);
+}
