@@ -15,18 +15,32 @@ public class CommanderDAOImpl implements CommanderDAO {
 
     @Override
     public void ajouterCommande(Client client) {
-        //ajoute une commande si le panier à deja ete reglé
         try (Connection connexion = daoFactory.getConnection()) {
 
+            /// Créer une nouvelle commande avec note = 0
+            String sql = "INSERT INTO commande (note, Payé) VALUES (?, ?)";
+            PreparedStatement stmt = connexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.setInt(1, 0);         // note
+            stmt.setBoolean(2, false); // Paye = false → panier non réglé
+            stmt.executeUpdate();
 
-                /// ajouter la nouvelle commande et le reste est en AI ou valeur par defaut
-                String sql = "INSERT INTO commande (note) VALUES (?)";
-                PreparedStatement stmt = connexion.prepareStatement(sql);
-                stmt.setInt(1, 0);
+            /// Récupére l’ID auto-généré de la commande
+            ResultSet generatedKeys = stmt.getGeneratedKeys();
+            int commandeId = -1;
+            if (generatedKeys.next()) {
+                commandeId = generatedKeys.getInt(1);
+            } else {
+                throw new SQLException("Échec de la récupération de l'ID de la commande.");
+            }
 
-                stmt.executeUpdate();
+            /// Lier le client à la commande dans la table historique
+            String sqlHistorique = "INSERT INTO historique (Id_profil, Id_commande) VALUES (?, ?)";
+            PreparedStatement stmt3 = connexion.prepareStatement(sqlHistorique);
+            stmt3.setInt(1, client.getId());
+            stmt3.setInt(2, commandeId);
+            stmt3.executeUpdate();
 
-
+            System.out.println("Nouvelle commande créée avec succès (Id = " + commandeId + ").");
 
         } catch (SQLException e) {
             System.out.println("Erreur lors de l'ajout d'une commande : " + e.getMessage());
