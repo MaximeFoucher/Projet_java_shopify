@@ -174,7 +174,7 @@ public class ClientDAOImpl implements ClientDAO {
             CommanderDAOImpl commandeDao = new CommanderDAOImpl(daoFactory);
 
             /// Récupérer toutes les commandes du client
-            String sqlCmds = "SELECT * FROM commande WHERE Id_client = ?";
+            String sqlCmds = "SELECT * FROM commande WHERE Id = ?";
             PreparedStatement stmtCmds = connexion.prepareStatement(sqlCmds);
             stmtCmds.setInt(1, client.getId());
             ResultSet rs = stmtCmds.executeQuery();
@@ -188,7 +188,7 @@ public class ClientDAOImpl implements ClientDAO {
             }
 
             /// Supprimer l'historique
-            String deleteHistorique = "DELETE FROM historique WHERE Id_client = ?";
+            String deleteHistorique = "DELETE FROM historique WHERE Id_profil = ?";
             PreparedStatement stmtHist = connexion.prepareStatement(deleteHistorique);
             stmtHist.setInt(1, client.getId());
             stmtHist.executeUpdate();

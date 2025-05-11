@@ -46,11 +46,18 @@
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
             <Label text="Données affichées" style="-fx-font-weight: bold"/>
-            <TableView fx:id="dataTable" prefHeight="600">
+            <TableView fx:id="clientTable" prefHeight="600">
                 <columns>
-                    <TableColumn fx:id="col1" text="Colonne 1" />
-                    <TableColumn fx:id="col2" text="Colonne 2" />
-                    <TableColumn fx:id="col3" text="Colonne 3" />
+                    <TableColumn fx:id="colNomClient" text="Nom" />
+                    <TableColumn fx:id="colEmailClient" text="Email" />
+                    <TableColumn fx:id="colAdminClient" text="Admin" />
+                </columns>
+            </TableView>
+            <TableView fx:id="articleTable">
+                <columns>
+                    <TableColumn fx:id="colNomArticle" text="Nom" />
+                    <TableColumn fx:id="colMarqueArticle" text="Marque" />
+                    <TableColumn fx:id="colPrixUniteArticle" text="Prix" />
                 </columns>
             </TableView>
         </VBox>
