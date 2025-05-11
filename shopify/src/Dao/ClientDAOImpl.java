@@ -3,6 +3,7 @@ package Dao;
 import Modele.*;
 import Dao.*;
 
+import java.io.Serial;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ public class ClientDAOImpl implements ClientDAO {
     public void AjouterClient(Profil Profil) {
             try {
 
-                DaoFactory daoFactory = new DaoFactory("shopify", "root", "");
+                DaoFactory daoFactory = DaoFactory.getInstance("shopify", "root", "");
 
                 String sql = "INSERT INTO profil (Nom, Email, Admin, Mdp) VALUES (?, ?, ?, ?)";
                 PreparedStatement stmt = connexion.prepareStatement(sql);
@@ -40,6 +41,8 @@ public class ClientDAOImpl implements ClientDAO {
                 if (rs.next()) {
                     id = rs.getInt("Id");
                 }
+                /// print l'id du client
+                System.out.println(id);
                 CommanderDAOImpl commanderDaoImpl = new CommanderDAOImpl(daoFactory);
                 /// faire un new client pour faire fonctionner ajouterCommande()
                 /// le nouveau client à part défaut dès son arrivé un panier (qui est vide)
