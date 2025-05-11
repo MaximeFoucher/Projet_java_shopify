@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 
 public class AdminController {
 
@@ -118,13 +119,94 @@ public class AdminController {
 
     @FXML
     private void handleAjouterArticle() {
-        // À compléter si besoin : nouvelle vue ou TextInputDialogs
+        Dialog<Article> dialog = new Dialog<>();
+        dialog.setTitle("Ajouter un article");
+
+        TextField nomField = new TextField();
+        nomField.setPromptText("Nom");
+
+        TextField marqueField = new TextField();
+        marqueField.setPromptText("Marque");
+
+        TextField prixField = new TextField();
+        prixField.setPromptText("Prix");
+
+        VBox content = new VBox(10, new Label("Nom :"), nomField,
+                new Label("Marque :"), marqueField,
+                new Label("Prix :"), prixField);
+        dialog.getDialogPane().setContent(content);
+
+        ButtonType ajouterButton = new ButtonType("Ajouter", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(ajouterButton, ButtonType.CANCEL);
+
+        dialog.setResultConverter(btn -> {
+            if (btn == ajouterButton) {
+                try {
+                    String nom = nomField.getText();
+                    String marque = marqueField.getText();
+                    double prix = Double.parseDouble(prixField.getText());
+                    return new Article(nom, marque, prix);
+                } catch (NumberFormatException e) {
+                    showError("Prix invalide.");
+                }
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(article -> {
+            articleDAO.ajouter(article);
+            chargerArticles();
+        });
     }
 
     @FXML
     private void handleModifierArticle() {
-        // Idem, selon tes besoins pour édition
+        Article selected = articleTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            Dialog<Article> dialog = new Dialog<>();
+            dialog.setTitle("Modifier un article");
+
+            TextField nomField = new TextField(selected.getArticleNom());
+            TextField marqueField = new TextField(selected.getArticleMarque());
+            TextField prixField = new TextField(String.valueOf(selected.getArticlePrixUnite()));
+
+            VBox content = new VBox(10, new Label("Nom :"), nomField,
+                    new Label("Marque :"), marqueField,
+                    new Label("Prix :"), prixField);
+            dialog.getDialogPane().setContent(content);
+
+            ButtonType modifierButton = new ButtonType("Modifier", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(modifierButton, ButtonType.CANCEL);
+
+            dialog.setResultConverter(btn -> {
+                if (btn == modifierButton) {
+                    try {
+                        selected.setArticleNom(nomField.getText());
+                        selected.setArticleMarque(marqueField.getText());
+                        selected.setArticlePrixUnite(Double.parseDouble(prixField.getText()));
+                        return selected;
+                    } catch (NumberFormatException e) {
+                        showError("Prix invalide.");
+                    }
+                }
+                return null;
+            });
+
+            dialog.showAndWait().ifPresent(article -> {
+                articleDAO.modifier(article);
+                chargerArticles();
+            });
+        }
     }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erreur");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 
     @FXML
     private void handleSupprimerArticle() {
