@@ -120,7 +120,7 @@ public class ArticleDaoImpl implements ArticleDao {
             // connexion
             Connection connexion = daoFactory.getConnection();
 
-            String sql = "UPDATE article SET Marque = ?, Nom = ?, Prix_unite = ?, Prix_groupe = ?, valeur_lot = ?, stock = ? WHERE articleID = ?";
+            String sql = "UPDATE article SET Marque = ?, Nom = ?, Prix_unite = ?, Prix_groupe = ?, valeur_lot = ?, stock = ? WHERE Id = ?";
 
             PreparedStatement preparedStatement = connexion.prepareStatement(sql);
             preparedStatement.setString(1,article.getArticleMarque());

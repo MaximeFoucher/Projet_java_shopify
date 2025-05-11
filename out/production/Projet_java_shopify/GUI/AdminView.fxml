@@ -5,6 +5,7 @@
 <?import javafx.geometry.*?>
 
 
+<?import javafx.scene.control.skin.TabPaneSkin.TabContentRegion?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="Controleur.AdminController"
@@ -57,7 +58,11 @@
                 <columns>
                     <TableColumn fx:id="colNomArticle" text="Nom" />
                     <TableColumn fx:id="colMarqueArticle" text="Marque" />
-                    <TableColumn fx:id="colPrixUniteArticle" text="Prix" />
+                    <TableColumn fx:id="colPrixUniteArticle" text="Prix Unité" />
+                    <TableColumn fx:id="colPrixGroupeArticle" text="Prix Groupe"/>
+                    <TableColumn fx:id="colValeurLotArticle" text="Lot"/>
+                    <TableColumn fx:id="colValeurStockArticle" text="Stock"/>
+
                 </columns>
             </TableView>
         </VBox>

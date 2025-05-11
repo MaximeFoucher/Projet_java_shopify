@@ -22,6 +22,9 @@ public class AdminController {
     @FXML private TableColumn<Article, String> colNomArticle;
     @FXML private TableColumn<Article, String> colMarqueArticle;
     @FXML private TableColumn<Article, Double> colPrixUniteArticle;
+    @FXML private TableColumn<Article, Double> colPrixGroupeArticle;
+    @FXML private TableColumn<Article, Integer> colValeurLotArticle;
+    @FXML private TableColumn<Article, Integer> colValeurStockArticle;
 
     private ClientDAO clientDAO;
     private ArticleDao articleDAO;
@@ -47,6 +50,11 @@ public class AdminController {
         colNomArticle.setCellValueFactory(new PropertyValueFactory<>("articleNom"));
         colMarqueArticle.setCellValueFactory(new PropertyValueFactory<>("articleMarque"));
         colPrixUniteArticle.setCellValueFactory(new PropertyValueFactory<>("articlePrixUnite"));
+        colPrixGroupeArticle.setCellValueFactory(new PropertyValueFactory<>("articlePrixGroupe"));
+        colValeurLotArticle.setCellValueFactory(new PropertyValueFactory<>("articleValeurLot"));
+        colValeurStockArticle.setCellValueFactory(new PropertyValueFactory<>("articleStock"));
+
+
 
         chargerClients();
         chargerArticles();
@@ -123,32 +131,59 @@ public class AdminController {
         Dialog<Article> dialog = new Dialog<>();
         dialog.setTitle("Ajouter un article");
 
-        TextField nomField = new TextField();
-        nomField.setPromptText("Nom");
+        // Création des champs
+        TextField idField = new TextField();
+        idField.setPromptText("ID");
 
         TextField marqueField = new TextField();
         marqueField.setPromptText("Marque");
 
-        TextField prixField = new TextField();
-        prixField.setPromptText("Prix");
+        TextField nomField = new TextField();
+        nomField.setPromptText("Nom");
 
-        VBox content = new VBox(10, new Label("Nom :"), nomField,
+        TextField prixUniteField = new TextField();
+        prixUniteField.setPromptText("Prix Unité");
+
+        TextField prixGroupeField = new TextField();
+        prixGroupeField.setPromptText("Prix Groupe");
+
+        TextField valeurLotField = new TextField();
+        valeurLotField.setPromptText("Valeur Lot");
+
+        TextField stockField = new TextField();
+        stockField.setPromptText("Stock");
+
+        // Mise en page
+        VBox content = new VBox(10,
+                new Label("ID :"), idField,
+                new Label("Nom :"), nomField,
                 new Label("Marque :"), marqueField,
-                new Label("Prix :"), prixField);
+                new Label("Prix Unité :"), prixUniteField,
+                new Label("Prix Groupe :"), prixGroupeField,
+                new Label("Valeur Lot :"), valeurLotField,
+                new Label("Stock :"), stockField
+        );
         dialog.getDialogPane().setContent(content);
 
+        // Boutons
         ButtonType ajouterButton = new ButtonType("Ajouter", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(ajouterButton, ButtonType.CANCEL);
 
         dialog.setResultConverter(btn -> {
             if (btn == ajouterButton) {
                 try {
+                    int id = Integer.parseInt(idField.getText());
                     String nom = nomField.getText();
                     String marque = marqueField.getText();
-                    double prix = Double.parseDouble(prixField.getText());
-                    return new Article(nom, marque, prix);
+                    double prixUnite = Double.parseDouble(prixUniteField.getText());
+                    double prixGroupe = Double.parseDouble(prixGroupeField.getText());
+                    int valeurLot = Integer.parseInt(valeurLotField.getText());
+                    double stock = Double.parseDouble(stockField.getText());
+
+                    return new Article(id, marque, nom, prixUnite, prixGroupe, valeurLot, stock);
+
                 } catch (NumberFormatException e) {
-                    showError("Prix invalide.");
+                    showError("Veuillez remplir tous les champs numériques correctement.");
                 }
             }
             return null;
@@ -156,7 +191,7 @@ public class AdminController {
 
         dialog.showAndWait().ifPresent(article -> {
             articleDAO.ajouter(article);
-            chargerArticles();
+            chargerArticles(); // Recharge la liste affichée
         });
     }
 
@@ -169,11 +204,19 @@ public class AdminController {
 
             TextField nomField = new TextField(selected.getArticleNom());
             TextField marqueField = new TextField(selected.getArticleMarque());
-            TextField prixField = new TextField(String.valueOf(selected.getArticlePrixUnite()));
+            TextField prixUniteField = new TextField(String.valueOf(selected.getArticlePrixUnite()));
+            TextField prixGroupeField = new TextField(String.valueOf(selected.getArticlePrixGroupe()));
+            TextField valeurLotField = new TextField(String.valueOf(selected.getArticleValeurLot()));
+            TextField stockField = new TextField(String.valueOf(selected.getArticleStock()));
 
-            VBox content = new VBox(10, new Label("Nom :"), nomField,
+
+            VBox content = new VBox(10,
+                    new Label("Nom :"), nomField,
                     new Label("Marque :"), marqueField,
-                    new Label("Prix :"), prixField);
+                    new Label("Prix unité :"), prixUniteField,
+                    new Label("Prix Groupe :"), prixGroupeField,
+                    new Label("Valeur Lot :"), valeurLotField,
+                    new Label("Stock :"), stockField);
             dialog.getDialogPane().setContent(content);
 
             ButtonType modifierButton = new ButtonType("Modifier", ButtonBar.ButtonData.OK_DONE);
@@ -184,10 +227,13 @@ public class AdminController {
                     try {
                         selected.setArticleNom(nomField.getText());
                         selected.setArticleMarque(marqueField.getText());
-                        selected.setArticlePrixUnite(Double.parseDouble(prixField.getText()));
+                        selected.setArticlePrixUnite(Double.parseDouble(prixUniteField.getText()));
+                        selected.setArticlePrixGroupe(Double.parseDouble(prixGroupeField.getText()));
+                        selected.setArticleValeurLot(Integer.parseInt(valeurLotField.getText()));
+                        selected.setArticleStock(Double.parseDouble(stockField.getText()));
                         return selected;
                     } catch (NumberFormatException e) {
-                        showError("Prix invalide.");
+                        showError("Erreur dans la saisie.");
                     }
                 }
                 return null;
