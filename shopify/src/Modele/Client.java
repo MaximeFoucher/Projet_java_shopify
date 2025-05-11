@@ -10,5 +10,8 @@ public class Client extends Profil {
     public String getRole() {
         return "Client";
     }
+    public String getEmail() {return super.getEmail();}
+    public String getMdp() {return super.getMdp();}
+    public String getNom() {return super.getName();}
 }
 

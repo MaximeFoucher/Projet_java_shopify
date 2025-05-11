@@ -42,9 +42,9 @@ public class AdminController {
         colAdminClient.setCellValueFactory(new PropertyValueFactory<>("Admin"));
 
         // Initialisation colonnes article
-        colNomArticle.setCellValueFactory(new PropertyValueFactory<>("Nom"));
-        colMarqueArticle.setCellValueFactory(new PropertyValueFactory<>("Marque"));
-        colPrixUniteArticle.setCellValueFactory(new PropertyValueFactory<>("Prix_unite"));
+        colNomArticle.setCellValueFactory(new PropertyValueFactory<>("articleNom"));
+        colMarqueArticle.setCellValueFactory(new PropertyValueFactory<>("articleMarque"));
+        colPrixUniteArticle.setCellValueFactory(new PropertyValueFactory<>("articlePrixUnite"));
 
         chargerClients();
         chargerArticles();
