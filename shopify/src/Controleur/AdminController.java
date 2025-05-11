@@ -37,6 +37,7 @@ public class AdminController {
         this.articleDAO = new ArticleDaoImpl(mainApp.getDaoFactory());
 
         // Initialisation colonnes client
+        System.out.println("colNomClient est null ? " + (colNomClient == null));
         colNomClient.setCellValueFactory(new PropertyValueFactory<>("Nom"));
         colEmailClient.setCellValueFactory(new PropertyValueFactory<>("Email"));
         colAdminClient.setCellValueFactory(new PropertyValueFactory<>("Admin"));
