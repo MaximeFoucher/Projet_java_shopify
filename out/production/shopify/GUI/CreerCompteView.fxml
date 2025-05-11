@@ -6,7 +6,9 @@
 
 <VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml"
       fx:controller="Controleur.CreerCompteController"
-      spacing="10" alignment="CENTER">
+      spacing="10" alignment="CENTER"
+      prefHeight="700.0" prefWidth="800.0">
+
     <padding><Insets top="20" left="30" right="30" bottom="20"/></padding>
 
     <Label text="Créer un nouveau compte"/>
