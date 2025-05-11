@@ -18,7 +18,6 @@ public class CommanderDAOImpl implements CommanderDAO {
         //ajoute une commande si le panier à deja ete reglé
         try (Connection connexion = daoFactory.getConnection()) {
 
-
                 /// ajouter la nouvelle commande et le reste est en AI ou valeur par defaut
                 String sql = "INSERT INTO commande (note) VALUES (?)";
                 PreparedStatement stmt = connexion.prepareStatement(sql);
