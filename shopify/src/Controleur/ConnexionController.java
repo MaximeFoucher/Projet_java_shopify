@@ -5,7 +5,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 import Dao.ClientDAOImpl;
-import Modele.Client;
+import Modele.*;
 import java.sql.Connection;
 
 public class ConnexionController {
@@ -48,6 +48,8 @@ public class ConnexionController {
 
             if (client != null && client.getMdp().equals(password)) {
                 mainApp.setClientConnecte(client); // stocke le client
+                Commander panier = mainApp.getCommandeDAO().getPanierActif(client);
+                mainApp.setCommandeActive(panier);
                 mainApp.switchToPageAccueil();      // va sur la page d'accueil
             } else {
                 showAlert("Échec de la connexion", "Email ou mot de passe incorrect.");

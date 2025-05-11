@@ -10,6 +10,8 @@ public interface CommanderDAO {
     List<Article> getArticlesCommande(Commander commande);
     Client getClientFromCommande(Commander commande);
     public int getQuantiteArticleFromCommande(Commander commande, Article article);
+    public Commander getPanierActif(Client client);
+
     public boolean VerifierExistancePanier(Commander commande, Client client);
     public void MAJTableCommande(Commander commande);
     public void reglerPanier(Commander commande, Client client);

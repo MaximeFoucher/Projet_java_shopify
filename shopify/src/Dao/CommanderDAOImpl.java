@@ -199,6 +199,26 @@ public class CommanderDAOImpl implements CommanderDAO {
 
         return articles;
     }
+    @Override
+    public Commander getPanierActif(Client client) {
+        try (Connection connexion = daoFactory.getConnection()) {
+            String sql = "SELECT c.Id, c.Note, c.Payé FROM commande c " +
+                    "JOIN historique h ON h.Id_commande = c.Id " +
+                    "WHERE h.Id_profil = ? AND c.Payé = false LIMIT 1";
+
+            PreparedStatement stmt = connexion.prepareStatement(sql);
+            stmt.setInt(1, client.getId());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return new Commander(rs.getInt("Id"), rs.getInt("Note"), rs.getBoolean("Payé"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     @Override
     public boolean VerifierExistancePanier(Commander commande, Client client) {
@@ -288,7 +308,7 @@ public class CommanderDAOImpl implements CommanderDAO {
             }
 
             // Vérifier si l'article est déjà dans la commande
-            String checkSql = "SELECT Quantite FROM item WHERE Id_article = ? AND Id_commande = ?";
+            String checkSql = "SELECT Quantité FROM item WHERE Id_article = ? AND Id_commande = ?";
             PreparedStatement checkStmt = connexion.prepareStatement(checkSql);
             checkStmt.setInt(1, article.getArticleId());
             checkStmt.setInt(2, commande.getCommandeId());
@@ -296,7 +316,7 @@ public class CommanderDAOImpl implements CommanderDAO {
 
             if (rsCheck.next()) {
                 // Déjà présent → on met à jour la quantité et le prix
-                int quantiteExistante = rsCheck.getInt("Quantite");
+                int quantiteExistante = rsCheck.getInt("Quantité");
                 int nouvelleQuantite = quantiteExistante + quantiteArticle;
 
                 // Recalcul du prix total avec la nouvelle quantité
@@ -309,7 +329,7 @@ public class CommanderDAOImpl implements CommanderDAO {
                     nouveauPrix = nouvelleQuantite * prix_unite;
                 }
 
-                String updateSql = "UPDATE item SET Quantite = ?, Prix = ? WHERE Id_article = ? AND Id_commande = ?";
+                String updateSql = "UPDATE item SET Quantité = ?, Prix = ? WHERE Id_article = ? AND Id_commande = ?";
                 PreparedStatement updateStmt = connexion.prepareStatement(updateSql);
                 updateStmt.setInt(1, nouvelleQuantite);
                 updateStmt.setInt(2, nouveauPrix);
@@ -318,7 +338,7 @@ public class CommanderDAOImpl implements CommanderDAO {
                 updateStmt.executeUpdate();
             } else {
                 // Nouvel article → on l’insère
-                String insertSql = "INSERT INTO item (Id_article, Id_commande, Quantite, Prix) VALUES (?, ?, ?, ?)";
+                String insertSql = "INSERT INTO item (Id_article, Id_commande, Quantité, Prix) VALUES (?, ?, ?, ?)";
                 PreparedStatement insertStmt = connexion.prepareStatement(insertSql);
                 insertStmt.setInt(1, article.getArticleId());
                 insertStmt.setInt(2, commande.getCommandeId());
