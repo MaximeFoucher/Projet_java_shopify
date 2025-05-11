@@ -68,8 +68,9 @@ public class PageAccueilController {
 
                     try {
                         // Tu dois avoir une commande active à récupérer
-                        Commander commande = mainApp.getCommandeActive(); // à créer ou à stocker globalement
+                        //Commander commande = mainApp.getCommandeActive(); // à créer ou à stocker globalement
                         Client client = mainApp.getClientConnecte();
+                        Commander commande = mainApp.getCommandeDAO().getCommanderFromClient(client);
                         mainApp.getCommandeDAO().ajouterArticleDansCommande(commande, article, client, quantiteChoisie);
 
                         // Mettre à jour localement le stock de l'article

@@ -69,7 +69,7 @@ public class CommanderDAOImpl implements CommanderDAO {
                 int note = rs.getInt("Note");
                 boolean paye = rs.getBoolean("Payé");
 
-                int quantite = rs.getInt("Quantite");
+                int quantite = rs.getInt("Quantité");
                 double prix = rs.getDouble("Prix");
                 String nomArticle = rs.getString("Nom");
                 String marqueArticle = rs.getString("Marque");
@@ -145,7 +145,7 @@ public class CommanderDAOImpl implements CommanderDAO {
         int quantiteArticle = -1;
 
         try (Connection connexion = daoFactory.getConnection()) {
-            String sql = "SELECT Quantite FROM item WHERE Id_commande = ? AND Id_article = ?";
+            String sql = "SELECT Quantité FROM item WHERE Id_commande = ? AND Id_article = ?";
             PreparedStatement stmt = connexion.prepareStatement(sql);
             stmt.setInt(1, commande.getCommandeId());
             stmt.setInt(2, article.getArticleId());
@@ -153,7 +153,7 @@ public class CommanderDAOImpl implements CommanderDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                quantiteArticle = rs.getInt("Quantite");
+                quantiteArticle = rs.getInt("Quantité");
             }
         } catch (SQLException e) {
             System.out.println("Erreur lors de la récupération de la quantité de l'article : " + e.getMessage());
@@ -234,8 +234,8 @@ public class CommanderDAOImpl implements CommanderDAO {
     public void MAJTableCommande(Commander commande) {
         try (Connection connexion = daoFactory.getConnection()) {
 
-            // Étape 1 : Récupérer la somme des Notes des items
-            String sql = "SELECT SUM(Note) FROM item WHERE Id_commande = ?";
+            // Étape 1 : Récupérer la somme des Notes des items dans la commande
+            String sql = "SELECT SUM(Note) FROM commande WHERE Id = ?";
             int totalNote = 0;
 
             try (PreparedStatement stmt = connexion.prepareStatement(sql)) {
@@ -247,7 +247,7 @@ public class CommanderDAOImpl implements CommanderDAO {
             }
 
             // Étape 2 : Mettre à jour la Note dans la table commande
-            String updateSql = "UPDATE commande SET Note = ? WHERE Id_commande = ?";
+            String updateSql = "UPDATE commande SET Note = ? WHERE Id = ?";
             try (PreparedStatement updateStmt = connexion.prepareStatement(updateSql)) {
                 updateStmt.setInt(1, totalNote);
                 updateStmt.setInt(2, commande.getCommandeId());
@@ -288,7 +288,7 @@ public class CommanderDAOImpl implements CommanderDAO {
             }
 
             // Vérifier si l'article est déjà dans la commande
-            String checkSql = "SELECT Quantite FROM item WHERE Id_article = ? AND Id_commande = ?";
+            String checkSql = "SELECT Quantité FROM item WHERE Id_article = ? AND Id_commande = ?";
             PreparedStatement checkStmt = connexion.prepareStatement(checkSql);
             checkStmt.setInt(1, article.getArticleId());
             checkStmt.setInt(2, commande.getCommandeId());
@@ -296,7 +296,7 @@ public class CommanderDAOImpl implements CommanderDAO {
 
             if (rsCheck.next()) {
                 // Déjà présent → on met à jour la quantité et le prix
-                int quantiteExistante = rsCheck.getInt("Quantite");
+                int quantiteExistante = rsCheck.getInt("Quantité");
                 int nouvelleQuantite = quantiteExistante + quantiteArticle;
 
                 // Recalcul du prix total avec la nouvelle quantité
@@ -309,7 +309,7 @@ public class CommanderDAOImpl implements CommanderDAO {
                     nouveauPrix = nouvelleQuantite * prix_unite;
                 }
 
-                String updateSql = "UPDATE item SET Quantite = ?, Prix = ? WHERE Id_article = ? AND Id_commande = ?";
+                String updateSql = "UPDATE item SET Quantité = ?, Prix = ? WHERE Id_article = ? AND Id_commande = ?";
                 PreparedStatement updateStmt = connexion.prepareStatement(updateSql);
                 updateStmt.setInt(1, nouvelleQuantite);
                 updateStmt.setInt(2, nouveauPrix);
@@ -318,7 +318,7 @@ public class CommanderDAOImpl implements CommanderDAO {
                 updateStmt.executeUpdate();
             } else {
                 // Nouvel article → on l’insère
-                String insertSql = "INSERT INTO item (Id_article, Id_commande, Quantite, Prix) VALUES (?, ?, ?, ?)";
+                String insertSql = "INSERT INTO item (Id_article, Id_commande, Quantité, Prix) VALUES (?, ?, ?, ?)";
                 PreparedStatement insertStmt = connexion.prepareStatement(insertSql);
                 insertStmt.setInt(1, article.getArticleId());
                 insertStmt.setInt(2, commande.getCommandeId());
@@ -402,5 +402,33 @@ public class CommanderDAOImpl implements CommanderDAO {
 
         }
     }
+
+    public Commander getCommanderFromClient(Client client) {
+        Commander commande = null;
+
+        try (Connection connexion = daoFactory.getConnection()) {
+            String sql = "SELECT c.* FROM commande c " +
+                    "JOIN historique h ON c.Id = h.Id_commande " +
+                    "JOIN profil p ON h.Id_profil = p.Id " +
+                    "WHERE p.Id = ? AND (c.payé IS NULL OR c.payé = FALSE)";
+
+            PreparedStatement stmt = connexion.prepareStatement(sql);
+            stmt.setInt(1, client.getId());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int idCommande = rs.getInt("Id");
+                int note = rs.getInt("note");
+                boolean paye = rs.getBoolean("payé");
+                commande = new Commander(idCommande, note, paye);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la récupération de la commande du client : " + e.getMessage(), e);
+        }
+
+        return commande;
+    }
+
 
 }
