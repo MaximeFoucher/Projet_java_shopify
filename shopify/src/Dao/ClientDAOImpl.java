@@ -96,8 +96,8 @@ public class ClientDAOImpl implements ClientDAO {
     }
 
     @Override
-    public List<Profil> ToutLister() {
-        List<Profil> clients = new ArrayList<>();
+    public List<Client> ToutLister() {
+        List<Client> clients = new ArrayList<>();
         try {
             String sql = "SELECT * FROM profil WHERE Admin = false";
             Statement stmt = connexion.createStatement();

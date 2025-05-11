@@ -7,7 +7,7 @@ public interface ClientDAO {
     void AjouterClient(Profil Profil);
     Client FindClientFromId(int id);
     Profil RechercheEmail(String email);
-    List<Profil> ToutLister();
+    List<Client> ToutLister();
     void MAJclient(Client client);
     void switchStatutAdmin(Client client);
     void changerNomClient(Client client, String nom);

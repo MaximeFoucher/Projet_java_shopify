@@ -79,7 +79,7 @@ public class Main extends Application {
         controller.setMainApp(this);
         controller.initClientData(); // Injecte les données du client
 
-        stage.setTitle("Panier cCient");
+        stage.setTitle("Panier Client");
         stage.setScene(new Scene(root));
         stage.show();
     }
@@ -88,7 +88,10 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/AdminView.fxml"));
         Parent root = loader.load();
 
-        // ⚠ À implémenter plus tard
+        AdminController controller = loader.getController();
+        controller.setMainApp(this);
+        controller.initDonnees();
+
         stage.setTitle("Espace Admin");
         stage.setScene(new Scene(root));
         stage.show();
