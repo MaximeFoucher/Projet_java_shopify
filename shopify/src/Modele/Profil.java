@@ -5,12 +5,14 @@ public class Profil {
     private String mdp;
     private String name;
     private String email;
+    private boolean admin;
 
     public Profil(int id, String mdp, String name, String email) {
         this.id = id;
         this.mdp = mdp;
         this.name = name;
         this.email = email;
+        this.admin = false;
     }
 
     public String getRole() {
@@ -44,5 +46,8 @@ public class Profil {
     public void setEmail (String email) {
         this.email = email;
     }
+
+    public boolean isAdmin() {return admin;}
+    public void SwitchAdmin() {this.admin = !this.admin;}
 
 }

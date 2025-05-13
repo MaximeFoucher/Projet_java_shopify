@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Controleur.CreerCompteController"
+      spacing="10" alignment="CENTER"
+      prefHeight="700.0" prefWidth="800.0">
+
+    <padding><Insets top="20" left="30" right="30" bottom="20"/></padding>
+
+    <Label text="Créer un nouveau compte"/>
+    <TextField fx:id="nomField" promptText="Nom complet"/>
+    <TextField fx:id="emailField" promptText="Adresse email"/>
+    <PasswordField fx:id="passwordField" promptText="Mot de passe"/>
+    <Button text="Créer mon compte" onAction="#validerCreation"/>
+    <Button text="Annuler" onAction="#annuler"/>
+</VBox>

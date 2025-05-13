@@ -1,6 +1,6 @@
 package Dao;
 
-import Modele.Article;
+import Modele.*;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -120,7 +120,7 @@ public class ArticleDaoImpl implements ArticleDao {
             // connexion
             Connection connexion = daoFactory.getConnection();
 
-            String sql = "UPDATE article SET Marque = ?, Nom = ?, Prix_unite = ?, Prix_groupe = ?, valeur_lot = ?, stock = ? WHERE articleID = ?";
+            String sql = "UPDATE article SET Marque = ?, Nom = ?, Prix_unite = ?, Prix_groupe = ?, valeur_lot = ?, stock = ? WHERE Id = ?";
 
             PreparedStatement preparedStatement = connexion.prepareStatement(sql);
             preparedStatement.setString(1,article.getArticleMarque());
@@ -145,20 +145,57 @@ public class ArticleDaoImpl implements ArticleDao {
     @Override
     public void supprimer(Article article) {
         try {
-            // connexion
+            /// Connexion à la base
             Connection connexion = daoFactory.getConnection();
 
-            String sql = "DELETE FROM article WHERE articleID = ?";
+            /// récupérer toutes les commandes contenant cet article (via item)
+            String sqlCommandes = "SELECT DISTINCT c.Id, c.Note, c.Payé " +
+                    "FROM commande c " +
+                    "JOIN item i ON c.Id = i.Id_commande " +
+                    "WHERE i.Id_article = ?";
 
-            PreparedStatement preparedStatement = connexion.prepareStatement(sql);
-            preparedStatement.setInt(1,article.getArticleId());
-            preparedStatement.execute();
-            preparedStatement.close();
+            PreparedStatement psCommandes = connexion.prepareStatement(sqlCommandes);
+            psCommandes.setInt(1, article.getArticleId());
+            ResultSet rs = psCommandes.executeQuery();
+
+            ArrayList<Commander> commandesImpactées = new ArrayList<>();
+
+            while (rs.next()) {
+                int id = rs.getInt("Id");
+                int note = rs.getInt("Note");
+                boolean paye = rs.getBoolean("Payé");
+
+                commandesImpactées.add(new Commander(id, note, paye));
+            }
+
+            rs.close();
+            psCommandes.close();
+
+            /// supprimer les items liés à l'article
+            String sqlDeleteItems = "DELETE FROM item WHERE Id_article = ?";
+            PreparedStatement psDeleteItems = connexion.prepareStatement(sqlDeleteItems);
+            psDeleteItems.setInt(1, article.getArticleId());
+            psDeleteItems.executeUpdate();
+            psDeleteItems.close();
+
+            /// supprimer l'article
+            String sqlDeleteArticle = "DELETE FROM article WHERE Id = ?";
+            PreparedStatement psDeleteArticle = connexion.prepareStatement(sqlDeleteArticle);
+            psDeleteArticle.setInt(1, article.getArticleId());
+            psDeleteArticle.executeUpdate();
+            psDeleteArticle.close();
+
+            /// mettre à jour les commandes concernées
+            CommanderDAOImpl commandeDAO = new CommanderDAOImpl(daoFactory);
+            for (Commander cmd : commandesImpactées) {
+                commandeDAO.MAJTableCommande(cmd);
+            }
+
             connexion.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("article non trouvé dans la base de données");
+            System.out.println("Erreur lors de la suppression de l'article.");
         }
     }
 }

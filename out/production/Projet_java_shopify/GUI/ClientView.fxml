@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Controleur.ClientController"
+      spacing="20"
+      alignment="CENTER"
+      prefHeight="700.0" prefWidth="800.0"
+      style="-fx-background-color: #f9f9f9;">
+
+    <padding><Insets top="40" right="40" bottom="40" left="40"/></padding>
+
+    <Label text="Espace Client"
+           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333;" />
+
+    <Label fx:id="nomLabel"
+           text="Nom du client"
+           style="-fx-font-size: 16px; -fx-text-fill: #444;" />
+
+    <!-- Zone de modification -->
+    <VBox spacing="10" alignment="CENTER"
+          style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 2);">
+
+        <Button text="Changer mon nom" onAction="#changerNom"
+                style="-fx-font-size: 14px;" />
+
+        <Button text="Changer mon mot de passe" onAction="#changerMDP"
+                style="-fx-font-size: 14px;" />
+    </VBox>
+
+    <!-- Navigation -->
+    <HBox spacing="15" alignment="CENTER">
+        <Button text="Mes commandes" onAction="#voirCommandes"
+                style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
+        <Button text="Accueil" onAction="#retourPageAccueil"/>
+        <Button text="Se déconnecter" onAction="#deconnexion"
+                style="-fx-background-color: #e53935; -fx-text-fill: white;" />
+    </HBox>
+</VBox>

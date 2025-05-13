@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Controleur.PanierController"
+      spacing="15" alignment="TOP_CENTER"
+      prefHeight="700.0" prefWidth="800.0">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Titre -->
+    <Label text="🛒 Votre Panier" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+
+    <!-- Tableau des articles du panier -->
+    <TableView fx:id="panierTable" prefHeight="400" prefWidth="700">
+        <columns>
+            <TableColumn fx:id="colNomArticle" text="Nom" />
+            <TableColumn fx:id="colMarqueArticle" text="Marque" />
+            <TableColumn fx:id="colPrixUniteArticle" text="Prix Unité" />
+            <TableColumn fx:id="colQuantiteArticle" text="Quantité" />
+        </columns>
+    </TableView>
+
+    <!-- Ligne des totaux -->
+    <HBox spacing="20" alignment="CENTER">
+        <Label fx:id="prixTotalBrutLabel" text="Prix brut : 0.00 €" style="-fx-font-size: 14px;" />
+        <Label fx:id="reductionLabel" text="Réduction : 0.00 €" style="-fx-font-size: 14px;" />
+        <Label fx:id="prixTotalLabel" text="Prix total : 0.00 €" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+    </HBox>
+
+    <!-- Boutons d'action -->
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Supprimer article" onAction="#handleSupprimerArticle"/>
+        <Button text="Valider le panier" onAction="#handleValiderPanier"/>
+        <Button text="Vider le panier" onAction="#handleViderPanier"/>
+        <Button text="Retour" onAction="#handleRetour"/>
+    </HBox>
+
+</VBox>

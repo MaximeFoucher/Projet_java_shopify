@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Controleur.CommandeController"
+      alignment="TOP_CENTER"
+      spacing="30"
+      prefHeight="700.0" prefWidth="800.0"
+      style="-fx-background-color: #f8f8f8;">
+
+    <!-- Titre principal -->
+    <Label text="Historique de vos commandes"
+           style="-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #333;" />
+
+    <!-- Carte contenant la liste -->
+    <VBox spacing="15"
+          alignment="TOP_CENTER"
+          style="-fx-background-color: white; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 8, 0, 0, 2);"
+          maxWidth="600">
+
+        <Label text="Commandes passées"
+               style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #444;" />
+
+        <ListView fx:id="commandesList"
+                  prefHeight="400"
+                  prefWidth="550"
+                  style="-fx-border-color: #ccc; -fx-border-radius: 5;" />
+    </VBox>
+
+    <!-- Bouton retour -->
+    <Button text="Retour"
+            onAction="#retour"
+            style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 10 20; -fx-font-size: 14px; -fx-background-radius: 5;" />
+</VBox>
