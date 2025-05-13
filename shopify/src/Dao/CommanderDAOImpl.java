@@ -51,7 +51,7 @@ public class CommanderDAOImpl implements CommanderDAO {
     public List<Commander> getCommandesClient(Client client) {
         // avoir toutes les commandes du client et le panier
         List<Commander> commandes = new ArrayList<>();
-        try (Connection connexion = daoFactory.getConnection()){
+        try (Connection connexion = daoFactory.getConnection()) {
 
             String sql = "SELECT c.Id, c.Note, c.Payé, i.Quanite, i.Prix, a.Nom, a.Marque " +
                     "FROM profil p " +
@@ -199,6 +199,7 @@ public class CommanderDAOImpl implements CommanderDAO {
 
         return articles;
     }
+
     @Override
     public Commander getPanierActif(Client client) {
         try (Connection connexion = daoFactory.getConnection()) {
@@ -267,10 +268,12 @@ public class CommanderDAOImpl implements CommanderDAO {
             }
 
             // Étape 2 : Mettre à jour la Note dans la table commande
-            String updateSql = "UPDATE commande SET Note = ? WHERE Id = ?";
+            String updateSql = "UPDATE commande SET Note = ?, Payé = ? WHERE Id = ?";
             try (PreparedStatement updateStmt = connexion.prepareStatement(updateSql)) {
                 updateStmt.setInt(1, totalNote);
-                updateStmt.setInt(2, commande.getCommandeId());
+                updateStmt.setBoolean(2, commande.getPaye());
+
+                updateStmt.setInt(3, commande.getCommandeId());
                 updateStmt.executeUpdate();
             }
 
@@ -396,6 +399,7 @@ public class CommanderDAOImpl implements CommanderDAO {
             /// faire un nouveau panier
             commande.setPaye();
             ajouterCommande(client);
+            MAJTableCommande(commande);
 
         } catch (SQLException e) {
             System.out.println("Erreur lors de l'ajout d'un article dans la commande : " + e.getMessage());
@@ -404,7 +408,7 @@ public class CommanderDAOImpl implements CommanderDAO {
     }
 
     @Override
-    public void supprimerCommande(Commander commande){
+    public void supprimerCommande(Commander commande) {
         try (Connection connexion = daoFactory.getConnection()) {
             /// supprimer les items associés à la commande
             String sql = "DELETE FROM item WHERE Id_commande = ?";
@@ -425,7 +429,7 @@ public class CommanderDAOImpl implements CommanderDAO {
     }
 
     @Override
-    public void viderPanier(Client client){
+    public void viderPanier(Client client) {
         try (Connection connexion = daoFactory.getConnection()) {
             /// recuperer l'id du panier en cours
             /// supprimer les items associés au panier
@@ -483,5 +487,63 @@ public class CommanderDAOImpl implements CommanderDAO {
         return commande;
     }
 
+    public void supprimerArticledeCommande(Commander commande, Article article) {
+        try (Connection connexion = daoFactory.getConnection()) {
+            /// Supprimer l'item lié à cette commande
+            String sqlDeleteItems = "DELETE FROM item WHERE Id_commande = ? AND Id_article = ?";
+            PreparedStatement deleteStmt = connexion.prepareStatement(sqlDeleteItems);
+            deleteStmt.setInt(1, commande.getCommandeId());
+            deleteStmt.setInt(2, article.getArticleId());
+            deleteStmt.executeUpdate();
+            MAJTableCommande(commande);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    public int getNoteCommande(Commander commande) {
+        int note = 0;
+        try (Connection connexion = daoFactory.getConnection()) {
+            // Vérifier si l'article est déjà dans la commande
+            String checkSql = "SELECT Note FROM commande WHERE Id = ?";
+            PreparedStatement checkStmt = connexion.prepareStatement(checkSql);
+            checkStmt.setInt(1, commande.getCommandeId());
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next()) {
+                note = rs.getInt("Note");
+
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return note;
+    }
+
+    @Override
+    public List<Commander> getHistoriqueClient(Client client) {
+        List<Commander> commandes = new ArrayList<>();
+        try (Connection connexion = daoFactory.getConnection()) {
+
+            String sql = "SELECT DISTINCT c.Id, c.Note, c.Payé " +
+                    "FROM commande c " +
+                    "JOIN historique h ON h.Id_commande = c.Id " +
+                    "WHERE h.Id_profil = ? AND c.Payé = TRUE";
+
+            PreparedStatement stmt = connexion.prepareStatement(sql);
+            stmt.setInt(1, client.getId());
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int commandeId = rs.getInt("Id");
+                int note = rs.getInt("Note");
+                boolean paye = rs.getBoolean("Payé");
+
+                commandes.add(new Commander(commandeId, note, paye));
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la récupération de l'historique : " + e.getMessage());
+        }
+        return commandes;
+    }
 }

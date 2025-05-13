@@ -28,8 +28,13 @@
             <Button text="Changer Nom" onAction="#handleChangerNomClient"/>
             <Button text="Changer Email" onAction="#handleChangerEmailClient"/>
             <Button text="Changer Mot de Passe" onAction="#handleChangerMDPClient"/>
-            <Button text="Basculer Admin/Client" onAction="#handleToggleAdmin"/>
+            <Button text="Basculer Admin" onAction="#handleToggleAdmin"/>
             <Button text="Supprimer Client" onAction="#handleSupprimerClient"/>
+
+            <Separator />
+
+            <Label text="Gestion Admins" style="-fx-font-weight: bold"/>
+            <Button text="Basculer Client" onAction="#handleToggleClient"/>
 
             <Separator />
 
@@ -47,11 +52,21 @@
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
             <Label text="Données affichées" style="-fx-font-weight: bold"/>
-            <TableView fx:id="clientTable" prefHeight="600">
+            <TableView fx:id="clientTable" prefHeight="400">
+                <Label fx:id="prixTotalLabel" text="Prix total : 0.00 €" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+
                 <columns>
                     <TableColumn fx:id="colNomClient" text="Nom" />
                     <TableColumn fx:id="colEmailClient" text="Email" />
-                    <TableColumn fx:id="colAdminClient" text="Admin" />
+                    <TableColumn fx:id="colMdpClient" text="Mdp" />
+                </columns>
+            </TableView>
+            <TableView fx:id="adminTable" prefHeight="400">
+                <columns>
+                    <TableColumn fx:id="colNomAdmin" text="Nom" />
+                    <TableColumn fx:id="colEmailAdmin" text="Email" />
+                    <TableColumn fx:id="colMdpAdmin" text="Mdp" />
+
                 </columns>
             </TableView>
             <TableView fx:id="articleTable">

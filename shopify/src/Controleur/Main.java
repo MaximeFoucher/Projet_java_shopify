@@ -105,9 +105,9 @@ public class Main extends Application {
         controller.setMainApp(this);
         controller.setClient(client);
 
-        // Récupération des commandes du client
+        // Récupération des commandes payées du client
         CommanderDAO commandeDAO = new CommanderDAOImpl(daoFactory);
-        List<Commander> commandes = commandeDAO.getCommandesClient(client);
+        List<Commander> commandes = commandeDAO.getHistoriqueClient(client);
         controller.setCommandes(commandes);
 
         stage.setTitle("Historique des commandes");
@@ -121,6 +121,11 @@ public class Main extends Application {
 
         PanierController controller = loader.getController();
         controller.setMainApp(this);
+        controller.setClient(clientConnecte);
+
+        Commander panier = commandeDAO.getPanierActif(clientConnecte);
+        List<Article> articles = commandeDAO.getArticlesCommande(panier);
+        controller.setPanier(articles);
 
         stage.setTitle("Panier");
         stage.setScene(new Scene(root));
@@ -138,6 +143,19 @@ public class Main extends Application {
         stage.setScene(new Scene(root));
         stage.show();
     }
+
+    public void showConfirmationPaiement() throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/GUI/PaiementEffectue.fxml"));
+        Parent root = loader.load();
+
+        PaiementEffectueController controller = loader.getController();
+        controller.setMainApp(this);
+
+        stage.setTitle("Paiement");
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+
 
     // ========================================
     // 🔧 Getters / Setters utiles dans les controllers

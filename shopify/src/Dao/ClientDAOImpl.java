@@ -117,12 +117,15 @@ public class ClientDAOImpl implements ClientDAO {
 
             //DaoFactory daoFactory = new DaoFactory("shopify", "root", "");
 
-            String updateSql = "UPDATE profil SET Mdp = ?, Email = ?, Nom = ? WHERE Id = ?";
+            String updateSql = "UPDATE profil SET Mdp = ?, Email = ?, Nom = ?, Admin = ? WHERE Id = ?";
             PreparedStatement stmt = connexion.prepareStatement(updateSql);
             stmt.setString(1, client.getMdp());
             stmt.setString(2, client.getEmail());
             stmt.setString(3, client.getName());
-            stmt.setInt(4, client.getId());
+            stmt.setBoolean(4, client.isAdmin());
+
+            stmt.setInt(5, client.getId());
+
             stmt.executeUpdate();
 
 
@@ -134,6 +137,7 @@ public class ClientDAOImpl implements ClientDAO {
     @Override
     public void switchStatutAdmin(Client client) {
         client.SwitchAdmin();
+        System.out.println(client.isAdmin());
         MAJclient(client);
     }
 

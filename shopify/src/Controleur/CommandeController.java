@@ -1,9 +1,10 @@
 package Controleur;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
+import Modele.Article;
 import Modele.Client;
 import Modele.Commander;
+import javafx.fxml.FXML;
+import javafx.scene.control.ListView;
 
 import java.util.List;
 
@@ -32,14 +33,18 @@ public class CommandeController {
     private void afficherCommandes() {
         commandesList.getItems().clear();
         for (Commander cmd : commandes) {
-            commandesList.getItems().add("Id : " + cmd.getCommandeId() + "Note : " + cmd.getNote() + "Payé : " + cmd.getPaye());
+            commandesList.getItems().add(
+                    String.format("Commande #%d | Total : %.2f €",
+                            cmd.getCommandeId(),
+                            (double) cmd.getNote())
+            );
         }
     }
 
     @FXML
     private void retour() {
         try {
-            mainApp.switchToClientView();
+            mainApp.switchToPageAccueil();
         } catch (Exception e) {
             e.printStackTrace();
         }

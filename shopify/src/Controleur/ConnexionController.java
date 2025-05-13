@@ -5,6 +5,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
 import Dao.ClientDAOImpl;
+import Dao.AdminDAOImpl;
 import Modele.*;
 import java.sql.Connection;
 
@@ -16,8 +17,10 @@ public class ConnexionController {
     @FXML
     private PasswordField passwordField;
 
+    private Client client;
     private Main mainApp;
     private ClientDAOImpl clientDAO;
+    private AdminDAOImpl adminDAO;
 
     // Appelée par le Main après chargement du FXML
     public void setMainApp(Main mainApp) {
@@ -25,7 +28,9 @@ public class ConnexionController {
         // Création de la DAO avec la connexion partagée
         Connection conn = mainApp.getConnexion(); // ajoute cette méthode dans Main si nécessaire
         this.clientDAO = new ClientDAOImpl(conn);
+        this.adminDAO = new AdminDAOImpl(conn);
     }
+
 
     @FXML
     private void seConnecter() {
@@ -38,7 +43,8 @@ public class ConnexionController {
         }
 
         try {
-            if (email.equals("admin") && password.equals("admin")) {
+            Admin admin = (Admin) adminDAO.RechercheEmail(email);
+            if (admin != null && admin.getMdp().equals(password)) {
                 mainApp.switchToAdminView();
                 return;
             }

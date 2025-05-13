@@ -9,4 +9,7 @@ public class Admin extends Profil {
     public String getRole() {
         return "Admin";
     }
+    public String getEmail() {return super.getEmail();}
+    public String getMdp() {return super.getMdp();}
+    public String getNom() {return super.getName();}
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="Controleur.PaiementEffectueController"
+      spacing="20" alignment="CENTER"
+      prefHeight="300.0" prefWidth="500.0"
+      style="-fx-background-color: white;">
+
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
+
+    <ProgressIndicator fx:id="loader" prefWidth="80" prefHeight="80"/>
+
+    <Label fx:id="messageLabel"
+           text="Paiement en cours..."
+           style="-fx-font-size: 16px; -fx-text-fill: #333;" />
+
+    <Button fx:id="btnRetourAccueil"
+            text="Retour à l'accueil"
+            visible="false"
+            onAction="#handleRetourAccueil"
+            style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 10 20;" />
+</VBox>

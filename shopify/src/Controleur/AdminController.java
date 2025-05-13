@@ -17,6 +17,13 @@ public class AdminController {
     @FXML private TableColumn<Client, String> colNomClient;
     @FXML private TableColumn<Client, String> colEmailClient;
     @FXML private TableColumn<Client, Boolean> colAdminClient;
+    @FXML private TableColumn<Client, String> colMdpClient;
+
+    @FXML private TableView<Admin> adminTable;
+    @FXML private TableColumn<Admin, String> colNomAdmin;
+    @FXML private TableColumn<Admin, String> colEmailAdmin;
+    @FXML private TableColumn<Admin, Boolean> colAdminAdmin;
+    @FXML private TableColumn<Admin, String> colMdpAdmin;
 
     @FXML private TableView<Article> articleTable;
     @FXML private TableColumn<Article, String> colNomArticle;
@@ -27,6 +34,8 @@ public class AdminController {
     @FXML private TableColumn<Article, Integer> colValeurStockArticle;
 
     private ClientDAO clientDAO;
+    private AdminDAO adminDAO;
+
     private ArticleDao articleDAO;
     private DaoFactory daoFactory;
     private Main mainApp;
@@ -39,12 +48,21 @@ public class AdminController {
         // Initialisation des DAO une fois mainApp défini
         this.clientDAO = new ClientDAOImpl(mainApp.getConnexion());
         this.articleDAO = new ArticleDaoImpl(mainApp.getDaoFactory());
+        this.adminDAO = new AdminDAOImpl(mainApp.getConnexion());
 
         // Initialisation colonnes client
         System.out.println("colNomClient est null ? " + (colNomClient == null));
         colNomClient.setCellValueFactory(new PropertyValueFactory<>("Nom"));
         colEmailClient.setCellValueFactory(new PropertyValueFactory<>("Email"));
-        colAdminClient.setCellValueFactory(new PropertyValueFactory<>("Admin"));
+        colMdpClient.setCellValueFactory(new PropertyValueFactory<>("Mdp"));
+//        colAdminClient.setCellValueFactory(new PropertyValueFactory<>("Admin"));
+
+        // Initialisation colonnes admin
+        System.out.println("colNomAdmin est null ? " + (colNomAdmin == null));
+        colNomAdmin.setCellValueFactory(new PropertyValueFactory<>("Nom"));
+        colEmailAdmin.setCellValueFactory(new PropertyValueFactory<>("Email"));
+        colMdpAdmin.setCellValueFactory(new PropertyValueFactory<>("Mdp"));
+//        colAdminAdmin.setCellValueFactory(new PropertyValueFactory<>("Admin"));
 
         // Initialisation colonnes article
         colNomArticle.setCellValueFactory(new PropertyValueFactory<>("articleNom"));
@@ -57,6 +75,7 @@ public class AdminController {
 
 
         chargerClients();
+        chargerAdmins();
         chargerArticles();
     }
 
@@ -64,7 +83,10 @@ public class AdminController {
         ObservableList<Client> clients = FXCollections.observableArrayList(clientDAO.ToutLister());
         clientTable.setItems(clients);
     }
-
+    private void chargerAdmins() {
+        ObservableList<Admin> admin = FXCollections.observableArrayList(adminDAO.ToutLister());
+        adminTable.setItems(admin);
+    }
     private void chargerArticles() {
         ObservableList<Article> articles = FXCollections.observableArrayList(articleDAO.getAll());
         articleTable.setItems(articles);
@@ -123,6 +145,17 @@ public class AdminController {
         if (selected != null) {
             clientDAO.switchStatutAdmin(selected);
             chargerClients();
+            chargerAdmins();
+        }
+    }
+
+    @FXML
+    private void handleToggleClient() {
+        Admin selected = adminTable.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            adminDAO.switchStatutAdmin(selected);
+            chargerClients();
+            chargerAdmins();
         }
     }
 

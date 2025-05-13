@@ -46,9 +46,25 @@ public class AdminDAOImpl implements AdminDAO {
             return null;
         }
 
+        public void switchStatutAdmin(Admin admin) {
+            admin.SwitchAdmin();
+            try{
+                System.out.print("Admin statut");
+
+                System.out.println(admin.isAdmin());
+
+                String updateSql = "UPDATE profil SET Admin = false WHERE Id = ?";
+                PreparedStatement stmt = connexion.prepareStatement(updateSql);
+                stmt.setInt(1, admin.getId());
+                stmt.executeUpdate();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         @Override
-        public List<Profil> ToutLister() {
-            List<Profil> admins = new ArrayList<>();
+        public List<Admin> ToutLister() {
+            List<Admin> admins = new ArrayList<>();
             try {
                 String sql = "SELECT * FROM profil WHERE Admin = true";
                 Statement stmt = connexion.createStatement();
@@ -61,7 +77,5 @@ public class AdminDAOImpl implements AdminDAO {
             }
             return admins;
         }
-
-
 }
 

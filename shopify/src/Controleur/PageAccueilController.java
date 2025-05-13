@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PageAccueilController {
 
@@ -28,26 +29,45 @@ public class PageAccueilController {
     @FXML
     private TableColumn<Article, Void> colAjouter;
 
+    @FXML private TextField searchField;
+
+    private List<Article> articlesComplets; // liste complète à filtrer
+
+
     private Main mainApp;
 
     public void setMainApp(Main mainApp) {
         this.mainApp = mainApp;
         afficherArticles();
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> filtrerArticles(newValue));
     }
 
     private void afficherArticles() {
-        // Lier les colonnes aux attributs de Article
         colNom.setCellValueFactory(new PropertyValueFactory<>("articleNom"));
         colMarque.setCellValueFactory(new PropertyValueFactory<>("articleMarque"));
         colPrix.setCellValueFactory(new PropertyValueFactory<>("articlePrixUnite"));
-
-        // Colonne bouton "Ajouter au panier"
         colAjouter.setCellFactory(getAjouterCellFactory());
 
-        // Récupération des articles depuis la BDD via le DAO
-        ArrayList<Article> articles = mainApp.getDaoFactory().getArticleDao().getAll();
-        articleTable.getItems().setAll(articles);
+        articlesComplets = mainApp.getDaoFactory().getArticleDao().getAll(); // stocke tous les articles
+        articleTable.getItems().setAll(articlesComplets);
     }
+    private void filtrerArticles(String motCle) {
+        if (motCle == null || motCle.isBlank()) {
+            articleTable.getItems().setAll(articlesComplets);
+            return;
+        }
+
+        String recherche = motCle.toLowerCase();
+
+        List<Article> filtres = articlesComplets.stream()
+                .filter(a ->
+                        a.getArticleNom().toLowerCase().contains(recherche) ||
+                                a.getArticleMarque().toLowerCase().contains(recherche))
+                .toList();
+
+        articleTable.getItems().setAll(filtres);
+    }
+
 
     private Callback<TableColumn<Article, Void>, TableCell<Article, Void>> getAjouterCellFactory() {
         return param -> new TableCell<>() {
@@ -142,5 +162,6 @@ public class PageAccueilController {
         }
 
     }
+
 
 }
