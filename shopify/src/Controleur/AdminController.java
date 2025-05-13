@@ -296,5 +296,14 @@ public class AdminController {
             chargerArticles();
         }
     }
+
+    @FXML
+    private void deconnexion() {
+        try {
+            mainApp.showConnexionView();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 

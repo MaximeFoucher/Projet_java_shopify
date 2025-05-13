@@ -42,6 +42,12 @@
             <Button text="Ajouter Article" onAction="#handleAjouterArticle"/>
             <Button text="Modifier Article" onAction="#handleModifierArticle"/>
             <Button text="Supprimer Article" onAction="#handleSupprimerArticle"/>
+
+            <Separator />
+
+            <Label text="Déconnexion" style="-fx-font-weight: bold"/>
+            <Button text="Se déconnecter" onAction="#deconnexion"/>
+
         </VBox>
     </left>
 
@@ -51,7 +57,7 @@
             <padding>
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
-            <Label text="Données affichées" style="-fx-font-weight: bold"/>
+            <Label text="Clients" style="-fx-font-weight: bold"/>
             <TableView fx:id="clientTable" prefHeight="400">
                 <Label fx:id="prixTotalLabel" text="Prix total : 0.00 €" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
 
@@ -61,14 +67,17 @@
                     <TableColumn fx:id="colMdpClient" text="Mdp" />
                 </columns>
             </TableView>
+
+            <Label text="Admins" style="-fx-font-weight: bold"/>
             <TableView fx:id="adminTable" prefHeight="400">
                 <columns>
                     <TableColumn fx:id="colNomAdmin" text="Nom" />
                     <TableColumn fx:id="colEmailAdmin" text="Email" />
                     <TableColumn fx:id="colMdpAdmin" text="Mdp" />
-
                 </columns>
             </TableView>
+
+            <Label text="Articles" style="-fx-font-weight: bold"/>
             <TableView fx:id="articleTable">
                 <columns>
                     <TableColumn fx:id="colNomArticle" text="Nom" />
@@ -77,9 +86,9 @@
                     <TableColumn fx:id="colPrixGroupeArticle" text="Prix Groupe"/>
                     <TableColumn fx:id="colValeurLotArticle" text="Lot"/>
                     <TableColumn fx:id="colValeurStockArticle" text="Stock"/>
-
                 </columns>
             </TableView>
+
         </VBox>
     </center>
 
